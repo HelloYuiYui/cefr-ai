@@ -15,7 +15,14 @@
         "proceed": "Proceed"
     }, 
     "PromptPage": {
-        "title": "Writing Prompt",
-        "analyse": "Analyse"
+        "title": "Writing Prompt"
+    },
+    "FormPage": {
+        "enterText": "Enter your text:",
+        "analyze": "Analyze"
+    },
+    "ReviewPage": {
+        "reviewYourInput": "Review Your Input",
+        "analysis": "Analysis"
     }
 }

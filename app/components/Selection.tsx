@@ -1,5 +1,5 @@
 import { Dispatch } from "react";
-import { Language, Level } from "../types"; 
+import { Language, Level, Levels } from "../types"; 
 import { useTranslations } from "next-intl";
 
 export default function Selection({ language, changeLanguage, level, changeLevel, proceedToPractice }: { language: Language; changeLanguage: Dispatch<React.SetStateAction<Language>>; level: Level; changeLevel: Dispatch<React.SetStateAction<Level>>; proceedToPractice: () => void; }) {
@@ -26,13 +26,13 @@ export default function Selection({ language, changeLanguage, level, changeLevel
                 </div>
                 <div className="dropdownContainer">
                     <label htmlFor="levelSelect">{t('level')}: </label>
-                    <select id="levelSelect" name="level" defaultValue="B1" className="dropdown">
-                        <option value="A1">A1</option>
-                        <option value="A2">A2</option>
-                        <option value="B1">B1</option>
-                        <option value="B2">B2</option>
-                        <option value="C1">C1</option>
-                        <option value="C2">C2</option>
+                    <select id="levelSelect" name="level" defaultValue={Levels.DEFAULT} className="dropdown" onChange={(e) => changeLevel(e.target.value as Level)}>
+                        <option value={Levels.A1}>{Levels.A1}</option>
+                        <option value={Levels.A2}>{Levels.A2}</option>
+                        <option value={Levels.B1}>{Levels.B1}</option>
+                        <option value={Levels.B2}>{Levels.B2}</option>
+                        <option value={Levels.C1}>{Levels.C1}</option>
+                        <option value={Levels.C2}>{Levels.C2}</option>
                     </select>
                 </div>
                 <button className="proceedButton" type="submit">{t('proceed')}</button>

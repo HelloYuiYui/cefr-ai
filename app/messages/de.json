@@ -14,7 +14,14 @@
         "proceed": "Fortfahren"
     },
     "PromptPage": {
-        "title": "Schreibthema",
-        "analyse": "Analyse"
-    }
+        "title": "Schreibthema"
+    },
+    "FormPage": {
+        "enterText": "Geben Sie Ihren Text ein:",
+        "analyze": "Analysieren"
+    },
+    "ReviewPage": {
+        "reviewYourInput": "Überprüfen Sie Ihre Eingabe",
+        "analysis": "Analyse"
+    } 
 }
