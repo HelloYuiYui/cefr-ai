@@ -1,0 +1,20 @@
+{
+    "Home" : {
+        "title": "Bienvenue dans l'assistant d'exercices CECR!",
+        "subtitle": "Choisissez une langue et un niveau pour commencer.",
+        "select_language": "Sélectionnez votre langue :",
+        "select_level": "Sélectionnez votre niveau CECR :"
+    },
+    "LanguageSelection": {
+        "language": "Langue",
+        "english": "English",
+        "german": "Deutsch",
+        "french": "Français",
+        "level": "Niveau",
+        "proceed": "Continuer"
+    },
+    "PromptPage": {
+        "title": "Sujet d'écriture",
+        "analyse": "Analyser"
+    }
+}

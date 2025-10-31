@@ -1,0 +1,21 @@
+{
+    "Home" : {
+        "title": "Welcome to the CEFR Writing Assistant!",
+        "subtitle": "Choose a language and a level to get started.",
+        "select_language": "Select your language:",
+        "select_level": "Select your CEFR level:",
+        "proceed": "Continue"
+    },
+    "LanguageSelection": {
+        "language": "Language",
+        "english": "English",
+        "german": "Deutsch",
+        "french": "Français",
+        "level": "Level",
+        "proceed": "Proceed"
+    }, 
+    "PromptPage": {
+        "title": "Writing Prompt",
+        "analyse": "Analyse"
+    }
+}

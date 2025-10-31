@@ -1,0 +1,20 @@
+{
+    "Home" : {
+        "title": "Willkommen beim CEFR Übungsassistenten!",
+        "subtitle": "Entscheiden Sie sich für eine Sprache und ein Niveau, um zu beginnen.",
+        "select_language": "Wählen Sie Ihre Sprache:",
+        "select_level": "Wählen Sie Ihr CEFR-Niveau:"
+    },
+    "LanguageSelection": {
+        "language": "Sprache",
+        "english": "English",
+        "german": "Deutsch",
+        "french": "Français",
+        "level": "Niveau",
+        "proceed": "Fortfahren"
+    },
+    "PromptPage": {
+        "title": "Schreibthema",
+        "analyse": "Analyse"
+    }
+}
