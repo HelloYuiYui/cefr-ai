@@ -22,6 +22,12 @@
     },
     "ReviewPage": {
         "reviewYourInput": "Überprüfen Sie Ihre Eingabe",
-        "analysis": "Analyse"
-    } 
+        "analysis": "Analyse",
+        "grammarFeedback": "Grammatik-Feedback",
+        "vocabularyFeedback": "Vokabular-Feedback",
+        "textFluencyFeedback": "Textfluss-Feedback",
+        "totalScore": "Gesamtpunktzahl",
+        "level": "Geschätztes Niveau",
+        "language": "Analysierte Sprache"
+    }
 }

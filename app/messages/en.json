@@ -23,6 +23,12 @@
     },
     "ReviewPage": {
         "reviewYourInput": "Review Your Input",
-        "analysis": "Analysis"
+        "analysis": "Analysis",
+        "grammarFeedback": "Grammar Feedback",
+        "vocabularyFeedback": "Vocabulary Feedback",
+        "textFluencyFeedback": "Text Fluency Feedback",
+        "totalScore": "Total Score",
+        "level": "Estimated Level",
+        "language": "Analyzed Language"
     }
 }

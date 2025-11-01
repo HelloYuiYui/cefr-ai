@@ -9,7 +9,15 @@ Morphosyntaxe / orthographe grammaticale: Peut utiliser avec un contrôle limit�
 Cohérence et cohésion: Peut relier les mots avec des connecteurs très élémentaires tels que «et», «alors». - 1 point
 Niveau estimé: Donnez un niveau CEFR estimé, sans tenir compte du niveau du prompt, la production de l'utilisateur, utilisez seulement [A1, A2, B1, B2, C1, C2]. - Aucun point attribué.
 
-Le prompt est le suivant: "${prompt}"
+Le prompt: "${prompt}"
 
-La production de l'utilisateur est la suivante: "${userInput}"
+La production de l'utilisateur: "${userInput}"
+`;
+
+export const baseline = (prompt: string, userInput: string, language?: string, level?: string) => `
+${language ? "This is a text in language " + language + ", provide the feedback in English. " : ""}${level ? "The CEFR level being assessed is " + level + ", but this may not be accurate and the user may have worse writing skills. " : ""}Mark the user's written production based on the relevant CEFR level criteria, connection between the prompt and the user's production. Give the user a score out of 100, where 60 is a pass mark, and provide constructive feedback on their strengths and areas for improvement. Be harsh and strict in marking, try to not give too high marks.
+
+The prompt: "${prompt}"
+
+The user's production: "${userInput}"
 `;

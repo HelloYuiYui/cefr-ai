@@ -1,10 +1,8 @@
 'use server'
-import { NextResponse } from 'next/server'
 import { cookies } from "next/headers";
 import mistral from '../../lib/mistral';
 import { Language, LanguageNames, Level, MODEL } from '../types';
 import { promptSchema, reviewGeneration } from '@/lib';
-import { useTranslations } from 'next-intl';
 
 export async function languageChange( language: Language ) {
     console.log('Setting language to:', language);
@@ -20,14 +18,19 @@ export async function reviewAnswer(language: Language, level: Level, prompt: str
 
 function stringifyReview (review: JSON) {
     let result = '';
-    let total = 0;
+    let achieved = 0;
+    let oufOf = 0;
     for (const [key, value] of Object.entries(review)) {
+        if (key === 'outOf') {
+            oufOf = value as number;
+            continue;
+        }
         result += `${key}:${value}\n`;
         if (typeof value === 'number') {
-            total += value;
+            achieved += value;
         }
     }
-    result += `totalScore: ${total}/15\n`;
+    result += `totalScore: ${achieved}/${oufOf}${oufOf === 100 ? "" : ` (${(achieved / oufOf * 100).toFixed(0)}%)`}\n`;
     return result;
 }
 
