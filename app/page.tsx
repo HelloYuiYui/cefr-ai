@@ -4,10 +4,8 @@ import { Form, Starter } from "./components";
 import Selection from "./components/Selection";
 import { Step, Language, Level } from "./types";
 import Prompt from "./components/Prompt";
-import { getPrompt, languageChange, submitHandle } from "./api/route";
+import { getPrompt, languageChange, reviewAnswer } from "./api/route";
 import Review from "./components/Review";
-import { set } from "zod/v4";
-
 
 export default function Home() {
     const [state, setState] = useState<Step>(Step.SELECTION);
@@ -21,7 +19,7 @@ export default function Home() {
         try {
             console.log('Fetching prompt for', language, level);
             const response = await getPrompt(language, level);
-            setPrompt(response as string);
+            setPrompt(response.prompt as string);
         } catch (error) {
             console.error('Error fetching prompt:', error);
             setPrompt('');
@@ -33,7 +31,8 @@ export default function Home() {
     const proceedToReview = async (userInput: string) => {
         try {
             setUserInput(userInput);
-            const response = await submitHandle(language, level, prompt, userInput);
+            const response = await reviewAnswer(language, level, prompt, userInput);
+            console.log('Received analysis:', response);
             setResult(response as string);
         } catch (error) {
             console.error('Error submitting user input:', error);
@@ -50,9 +49,8 @@ export default function Home() {
     if (true) {
         return (
             <div className="min-h-screen overflow-hidden">
-                {/* Change to passing only the language */}
-                {<Starter />}
-
+                <Starter />
+                
                 <div className="contents p-8 w-full h-full">
                     {
                         state === Step.SELECTION && 

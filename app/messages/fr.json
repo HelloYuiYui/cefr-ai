@@ -22,6 +22,18 @@
     },
     "ReviewPage": {
         "reviewYourInput": "Passez en revue votre saisie",
-        "analysis": "Analyse"
+        "analysis": "Analyse",
+        "grammarFeedback": "Retour d'information",
+        "vocabularyFeedback": "Retour sur le vocabulaire",
+        "textFluencyFeedback": "Retour sur la fluidité du texte",
+        "respectDeLaConsigne": "Respect de la consigne",
+        "correctionSociolinguistique": "Correction sociolinguistique",
+        "capaciteAInformerEtOuDecrire": "Capacité à informer et/ou décrire",
+        "lexiqueOrthographeLexicale": "Lexique/orthographe lexicale",
+        "morphosyntaxeOrthographeGrammaticale": "Morphosyntaxe/orthographe grammaticale",
+        "coherenceEtCohesion": "Cohérence et cohésion",
+        "level": "Niveau estimé",
+        "language": "Langue analysée",
+        "totalScore": "Score total"
     }
 }
