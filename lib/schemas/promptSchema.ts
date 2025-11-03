@@ -1,7 +1,13 @@
 import { Language, LanguageNames, Level, MODEL } from "@/app/types";
 import mistral from "../mistral";
 
-
+/**
+ * Get a writing prompt for the given language and CEFR level.
+ * @param language 
+ * @param level 
+ * @returns An object containing the prompt, language, and level.
+ * TODO : Chould simplify this?
+ */
 export const promptSchema = async (language: Language, level: Level) => {
     const languageName = LanguageNames[language];
     const prompt = await mistral.chat.complete({
@@ -50,9 +56,3 @@ export const promptSchema = async (language: Language, level: Level) => {
 }
 
 export default promptSchema;
-// [
-//     {
-//         role: 'system',
-//         content: `Treat this as a language level at ${language} CEFR level writing exercise at ${level}. The prompt was: ${prompt}. Here is the user's response: ${input}. Provide constructive feedback on grammar, vocabulary, and coherence, and give the user a score out of 10.`
-//     }
-// ]
