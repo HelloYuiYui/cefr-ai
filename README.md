@@ -8,7 +8,7 @@ This project uses Next.js, React, and TypeScript.
 
 The application is currently hosted on Vercel, and can be accessed through the following link: 
 
-https://cefr-ai-nc59.vercel.app/
+https://cefr-ai-mistral.vercel.app/ 
 
 
 ## Deploying it locally
@@ -19,7 +19,13 @@ Ensure that your Mistral API key is located at `./.env.local` and is as below:
 MISTRAL_API_KEY=[Your Mistral API key here]
 ```
 
-To run the development server, run
+To run the development server, ensure npm is available and first install next. 
+
+```bash
+npm install next
+```
+
+Then run: 
 
 ```bash
 npm run dev
