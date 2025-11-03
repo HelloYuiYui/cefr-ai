@@ -25,7 +25,6 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
                                 content: frenchA1(prompt, userInput)
                             }
                         ],
-                        randomSeed: 42,
                         responseFormat: {
                             type: 'json_schema',
                             jsonSchema: {
@@ -70,7 +69,6 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
                         content: baseline(prompt, userInput, language, level)
                     }
                 ],
-                randomSeed: 42,
                 responseFormat: {
                     type: 'json_schema',
                     jsonSchema: {

@@ -18,7 +18,6 @@ export const promptSchema = async (language: Language, level: Level) => {
                 content: `Provide a writing prompt in ${languageName} for CEFR level ${level}. The prompt should be engaging and suitable for learners at this proficiency level. Only give the prompt as a short description without any additional explanations.`
             }
         ],
-        randomSeed: 42,
         responseFormat: { 
             type: 'json_schema', 
             jsonSchema: {
