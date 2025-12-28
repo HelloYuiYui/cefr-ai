@@ -6,6 +6,7 @@ import { Step, Language, Level } from "./types";
 import Prompt from "./components/Prompt";
 import { getPrompt, languageChange, reviewAnswer } from "./api/route";
 import Review from "./components/Review";
+import logger from "@/lib/logger";
 
 export default function Home() {
     const [state, setState] = useState<Step>(Step.SELECTION);
@@ -17,11 +18,11 @@ export default function Home() {
 
     const proceedToPractice =  async () => {
         try {
-            console.log('Fetching prompt for', language, level);
+            logger.debug('Fetching prompt for', language, level);
             const response = await getPrompt(language, level);
             setPrompt(response.prompt as string);
         } catch (error) {
-            console.error('Error fetching prompt:', error);
+            logger.error('Error fetching prompt:', error);
             setPrompt('');
         } finally {
             setState(Step.PRACTICE);
@@ -32,22 +33,23 @@ export default function Home() {
         try {
             setUserInput(userInput);
             const response = await reviewAnswer(language, level, prompt, userInput);
-            console.log('Received analysis:', response);
+            logger.debug('Received analysis:', response);
             setResult(response as string);
         } catch (error) {
-            console.error('Error submitting user input:', error);
+            logger.error('Error submitting user input:', error);
         } finally {
             setState(Step.REVIEW);
         }
     };
 
     useEffect(() => {
-        console.log('Language changed to:', language);
+        logger.debug('Language changed to:', language);
         languageChange(language);
     }, [language]);
 
     if (true) {
         return (
+            
             <div className="min-h-screen overflow-hidden">
                 <Starter />
                 

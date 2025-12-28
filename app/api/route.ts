@@ -1,7 +1,8 @@
 'use server'
 import { cookies } from "next/headers";
-import { Language, LanguageNames, Level, MODEL } from '../types';
+import { Language, Level } from '../types';
 import { promptSchema, reviewGeneration } from '@/lib';
+import logger from '@/lib/logger';
 
 export async function GET() {
     return new Response('API is running');
@@ -9,7 +10,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
     const { language, level, prompt, input } = await request.json();
-    console.log('Received POST request with:', { language, level, prompt, input });
+    logger.debug('Received POST request with:', { language, level, prompt, input });
 
     const response = await reviewGeneration(language, level, prompt, input);
     return new Response(JSON.stringify(response), {
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
  * @param language - Language code to set in cookies
  */
 export async function languageChange( language: Language ) {
-    console.log('Setting language to:', language);
+    logger.debug('Setting language to:', language);
     const store = await cookies();
     store.set('locale', language, { path: '/' });
 }
