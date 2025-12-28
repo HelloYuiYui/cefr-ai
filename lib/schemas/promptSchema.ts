@@ -1,21 +1,31 @@
 import { Language, LanguageNames, Level, MODEL } from "@/app/types";
 import mistral from "../mistral";
+import z from 'zod';
+import { writingPrompt } from "./prompts";
+
+export const promptResultSchema = z.object({
+    prompt: z.string(),
+    language: z.string(),
+    level: z.string()
+});
+
+export type PromptResult = z.infer<typeof promptResultSchema>;
 
 /**
  * Get a writing prompt for the given language and CEFR level.
  * @param language 
  * @param level 
  * @returns An object containing the prompt, language, and level.
- * TODO : Chould simplify this?
+ * TODO : Could simplify this?
  */
-export const promptSchema = async (language: Language, level: Level) => {
+export const promptSchema = async (language: Language, level: Level): Promise<PromptResult> => {
     const languageName = LanguageNames[language];
     const prompt = await mistral.chat.complete({
         model: MODEL,
         messages: [
             {
                 role: 'system',
-                content: `Provide a writing prompt in ${languageName} for CEFR level ${level}. The prompt should be engaging and suitable for learners at this proficiency level. Only give the prompt as a short description without any additional explanations.`
+                content: writingPrompt(level, languageName)
             }
         ],
         responseFormat: { 
@@ -34,24 +44,28 @@ export const promptSchema = async (language: Language, level: Level) => {
                     additionalProperties: false
                 }
             }
-        }
+        },
+        temperature: 1.2
     })
-    let reply
-    try {
-        const content = prompt.choices?.[0]?.message?.content
-        
-        if (typeof content === 'string') {
-            // content is already a string, safe to parse
-            reply = JSON.parse(content) // eslint-disable-line no-undef 
-            console.log('Parsed prompt reply:', reply.prompt)
-        } else {
-            reply = 'No valid response.';
-            console.error('Unexpected content format:', content)
-        }
-    } catch (error) {
-        console.error('Error parsing prompt reply:', error)
+    const content = prompt.choices?.[0]?.message?.content;
+
+    if (typeof content !== 'string') {
+        throw new Error(`Unexpected model response format: ${JSON.stringify(content)}`);
     }
-    return reply;
+
+    let parsed: unknown;
+    try {
+        parsed = JSON.parse(content);
+    } catch (err) {
+        throw new Error(`Failed to parse model JSON response: ${String(err)}`);
+    }
+
+    const result = promptResultSchema.safeParse(parsed);
+    if (!result.success) {
+        throw new Error(`Model returned invalid prompt schema: ${JSON.stringify(result.error.errors)}`);
+    }
+
+    return result.data;
 }
 
 export default promptSchema;

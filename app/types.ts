@@ -9,7 +9,7 @@ export const Language = {
     GERMAN: 'de',
     FRENCH: 'fr',
     ENGLISH: 'en',
-    DEFAULT: 'fr'
+    DEFAULT: 'en'
 } as const;
 export type Language = typeof Language[keyof typeof Language];
 export const LanguageNames = Object.fromEntries(
@@ -28,7 +28,7 @@ export const Levels = {
     B2: 'B2',
     C1: 'C1',
     C2: 'C2',
-    DEFAULT: 'A1'
+    DEFAULT: 'B1'
 } as const;
 export type Level = typeof Levels[keyof typeof Levels];
 

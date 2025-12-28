@@ -28,6 +28,11 @@
         "textFluencyFeedback": "Textfluss-Feedback",
         "totalScore": "Gesamtpunktzahl",
         "level": "Geschätztes Niveau",
-        "language": "Analysierte Sprache"
+        "language": "Analysierte Sprache",
+        "erfuellung": "Erfüllung des Themas",
+        "kohaerenz": "Kohärenz und Zusammenhalt",
+        "wortschatz": "Wortschatzverwendung",
+        "strukturen": "Struktur und Grammatik",
+        "kurzerPruefkommentar": "Prüfkommentar"
     }
 }
