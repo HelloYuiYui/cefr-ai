@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import "./styles.css";
+import logger from '@/lib/logger';
 
 export default function Form({ proceedToReview }: { proceedToReview: (input: string) => void; }) {
     const t = useTranslations('FormPage');
@@ -8,13 +9,24 @@ export default function Form({ proceedToReview }: { proceedToReview: (input: str
             <form className="form" onSubmit={(e) => {
                 e.preventDefault();
                 const input = (e.currentTarget.elements.namedItem('userInput') as HTMLTextAreaElement).value;
-                console.log("Form submitted: ", input);
+                logger.debug("Form submitted: ", input);
                 proceedToReview(input as string);
             }}>
                 <label htmlFor="userInput">{t('enterText')}</label>
                 <br />
-                <textarea className="userInput" name="userInput" rows={10} cols={50} />
+                <textarea 
+                    className="userInput" 
+                    name="userInput" 
+                    rows={10} 
+                    cols={50}
+                    onChange={(e) => {
+                        const wordCount = e.currentTarget.value.trim().split(/\s+/).filter(word => word.length > 0).length;
+                        const counter = document.getElementById('wordCounter');
+                        if (counter) counter.textContent = `${wordCount} ${wordCount === 1 ? 'word' : 'words'}`;
+                    }}
+                />
                 <br />
+                <div id="wordCounter" className="wordCounter">0 words</div>
                 <button className="submitButton" type="submit">{t('analyze')}</button>
             </form>
         </div>

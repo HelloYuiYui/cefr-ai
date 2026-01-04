@@ -48,8 +48,21 @@ The prompt should:
 - Require typical language functions for the level  
   (e.g. describing, narrating, explaining, giving reasons, expressing opinions)
 - Be open-ended but clearly framed
+- Include a suggested word count range appropriate to the level 
 `
 }
+// TODO the prompt should have a recommended word length appropriate to the CEFR level
+// TODO Give the name of the topic in the response as well for recording purposes
+// TODO If I keep track of the given prompts we can avoid having to send this to Mistral every time
+
+// Examples of text types by level:
+// - A1–A2: personal emails, postcards, simple descriptions, short narratives
+// - B1: opinion essays, informal reports, personal reflections
+// - B2+: formal letters, argumentative essays, detailed reports
+
+// Additional task design guidelines:
+// - Specify the target audience (e.g. friend, teacher, general public)
+// - Include context or background information if needed
 
 // - Clearly imply a suitable text type (e.g. email, blog post, opinion text, report, story)
 // ---
