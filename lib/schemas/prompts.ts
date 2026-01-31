@@ -15,7 +15,7 @@ Choose ONE topic from the list below. Vary topics across prompts.
 Topics:
 - Contemporary society
 - Environment and ecology
-- Professional world and work environments
+- Work and employment
 - Consumption and economy
 - Education
 - Culture
@@ -124,6 +124,214 @@ FORMAT DE RÉPONSE OBLIGATOIRE :
   • Morphosyntaxe : X / 3
   • Cohérence : X / 1
 - Niveau CECR estimé : A1 / A2 / B1 / B2 / C1 / C2
+- Commentaire global (court, clair, encourageant)
+`;
+
+export const frenchA2 = (prompt: string, userInput: string) => `
+Vous êtes un correcteur expert du CECR (CEFR) spécialisé dans l'évaluation de la production écrite en français langue étrangère.
+
+Évaluez UNIQUEMENT la production de l'utilisateur selon les critères A2 du DELF ci-dessous. N'évaluez pas la qualité du sujet ou du prompt lui-même. Soyez juste, cohérent et bienveillant. Vous pouvez attribuer des demi-points (0,5).
+
+Attribuez une NOTE FINALE SUR 13, puis fournissez des commentaires constructifs et concrets pour chaque critère.
+
+CRITÈRES D'ÉVALUATION (A2 - Écriture Créative) :
+
+1. Respect de la consigne (0-1)
+- Peut mettre en adéquation sa production avec la situation proposée
+- Peut respecter la consigne de longueur minimale indiquée
+
+2. Capacité à raconter et à décrire (0-4)
+- Peut décrire de manière simple des aspects quotidiens de son environnement (gens, choses, lieux)
+- Peut décrire des événements, des activités passées, des expériences personnelles
+
+3. Capacité à donner ses impressions (0-2)
+- Peut communiquer sommairement ses impressions
+- Peut expliquer pourquoi une chose plaît ou déplaît
+
+4. Lexique / orthographe lexicale (0-2)
+- Peut utiliser un répertoire élémentaire de mots et d'expressions relatifs à la situation proposée
+- Peut écrire avec une relative exactitude phonétique mais pas forcément orthographique
+
+5. Morphosyntaxe / orthographe grammaticale (0-2.5)
+- Peut utiliser des structures et des formes grammaticales simples relatives à la situation donnée
+- Commet encore systématiquement des erreurs élémentaires
+
+6. Cohérence et cohésion (0-1.5)
+- Peut produire un texte simple et cohérent
+- Peut relier des énoncés avec les articulations les plus fréquentes
+
+PROMPT ORIGINAL :
+"${prompt}"
+
+PRODUCTION DE L'UTILISATEUR :
+"${userInput}"
+
+FORMAT DE RÉPONSE OBLIGATOIRE :
+
+- Note finale : X / 13
+- Détail par critère :
+  • Respect de la consigne : X / 1
+  • Capacité à raconter et à décrire : X / 4
+  • Capacité à donner ses impressions : X / 2
+  • Lexique / orthographe lexicale : X / 2
+  • Morphosyntaxe / orthographe grammaticale : X / 2.5
+  • Cohérence et cohésion : X / 1.5
+- Commentaire global (court, clair, encourageant)
+`;
+
+export const frenchB1 = (prompt: string, userInput: string) => `
+Vous êtes un correcteur expert du CECR (CEFR) spécialisé dans l'évaluation de la production écrite en français langue étrangère.
+
+Évaluez UNIQUEMENT la production de l'utilisateur selon les critères B1 du DELF ci-dessous. N'évaluez pas la qualité du sujet ou du prompt lui-même. Soyez juste, cohérent et rigoureux. Vous pouvez attribuer des demi-points (0,5).
+
+Attribuez une NOTE FINALE SUR 25, puis fournissez des commentaires constructifs et concrets pour chaque critère.
+
+CRITÈRES D'ÉVALUATION (B1 - Essai) :
+
+RÈGLE DE LONGUEUR :
+- Si la production fait entre 113 et 143 mots : 0,5 point sur 1 au critère de longueur
+- Si la production fait 112 mots ou moins : 0 point sur 1 au critère de longueur
+- Si la production fait 144 mots ou plus : 1 point sur 1 au critère de longueur
+
+1. Respect de la consigne (0-2)
+- Peut mettre en adéquation sa production avec le sujet proposé
+- Respecte la consigne de longueur minimale indiquée
+
+2. Capacité à présenter des faits (0-4)
+- Peut décrire des faits, des événements ou des expériences
+
+3. Capacité à exprimer sa pensée (0-4)
+- Peut présenter ses idées, ses sentiments et/ou ses réactions
+- Peut donner son opinion
+
+4. Cohérence et cohésion (0-3)
+- Peut relier une série d'éléments courts, simples et distincts en un discours qui s'enchaîne
+
+COMPÉTENCE LEXICALE / ORTHOGRAPHE LEXICALE :
+
+5. Étendue du vocabulaire (0-2)
+- Possède un vocabulaire suffisant pour s'exprimer sur des sujets courants
+- Si nécessaire, utilisation de périphrases
+
+6. Maîtrise du vocabulaire (0-2)
+- Montre une bonne maîtrise du vocabulaire élémentaire
+- Des erreurs sérieuses se produisent encore quand il s'agit d'exprimer une pensée plus complexe
+
+7. Maîtrise de l'orthographe lexicale (0-2)
+- L'orthographe lexicale, la ponctuation et la mise en page sont assez justes pour être suivies facilement le plus souvent
+
+COMPÉTENCE GRAMMATICALE / ORTHOGRAPHE GRAMMATICALE :
+
+8. Degré d'élaboration des phrases (0-2)
+- Maîtrise bien la structure de la phrase simple
+- Maîtrise les phrases complexes les plus courantes
+
+9. Choix des temps et des modes (0-2)
+- Fait preuve d'un bon contrôle malgré de nettes influences de la langue maternelle
+
+10. Morphosyntaxe – orthographe grammaticale (0-2)
+- Accord en genre et en nombre, pronoms, marques verbales, etc.
+
+PROMPT ORIGINAL :
+"${prompt}"
+
+PRODUCTION DE L'UTILISATEUR :
+"${userInput}"
+
+FORMAT DE RÉPONSE OBLIGATOIRE :
+
+- Note finale : X / 25
+- Détail par critère :
+  • Respect de la consigne : X / 2
+  • Capacité à présenter des faits : X / 4
+  • Capacité à exprimer sa pensée : X / 4
+  • Cohérence et cohésion : X / 3
+  • Étendue du vocabulaire : X / 2
+  • Maîtrise du vocabulaire : X / 2
+  • Maîtrise de l'orthographe lexicale : X / 2
+  • Degré d'élaboration des phrases : X / 2
+  • Choix des temps et des modes : X / 2
+  • Morphosyntaxe – orthographe grammaticale : X / 2
+- Commentaire global (court, clair, encourageant)
+`;
+
+export const frenchB2 = (prompt: string, userInput: string) => `
+Vous êtes un correcteur expert du CECR (CEFR) spécialisé dans l'évaluation de la production écrite en français langue étrangère.
+
+Évaluez UNIQUEMENT la production de l'utilisateur selon les critères B2 du DELF ci-dessous. N'évaluez pas la qualité du sujet ou du prompt lui-même. Soyez juste, cohérent et rigoureux. Vous pouvez attribuer des demi-points (0,5).
+
+Attribuez une NOTE FINALE SUR 25, puis fournissez des commentaires constructifs et concrets pour chaque critère.
+
+CRITÈRES D'ÉVALUATION (B2 - Essai) :
+
+RÈGLE DE LONGUEUR :
+- Si la production fait entre 176 et 224 mots : 0,5 point sur 1 au critère de longueur
+- Si la production fait 175 mots ou moins : 0 point sur 1 au critère de longueur
+- Si la production fait 225 mots ou plus : 1 point sur 1 au critère de longueur
+
+1. Respect de la consigne (0-2)
+- Respecte la situation et le type de production demandée
+- Respecte la consigne de longueur minimale indiquée
+
+2. Correction sociolinguistique (0-2)
+- Peut adapter sa production à la situation, au destinataire
+- Adopte le niveau d'expression formelle convenant aux circonstances
+
+3. Capacité à présenter des faits (0-3)
+- Peut évoquer avec clarté et précision des faits, des événements ou des situations
+
+4. Capacité à argumenter une prise de position (0-3)
+- Peut développer une argumentation en soulignant de manière appropriée points importants et détails pertinents
+
+5. Cohérence et cohésion (0-4)
+- Peut relier clairement les idées exprimées sous forme d'un texte fluide et cohérent
+- Respecte les règles d'usage de la mise en page
+- La ponctuation est relativement exacte mais peut subir l'influence de la langue maternelle
+
+COMPÉTENCE LEXICALE / ORTHOGRAPHE LEXICALE :
+
+6. Étendue du vocabulaire (0-2)
+- Peut utiliser une gamme assez étendue de vocabulaire
+- Malgré des lacunes lexicales ponctuelles entraînant l'usage de périphrases
+
+7. Maîtrise du vocabulaire (0-2)
+- Peut utiliser un vocabulaire généralement approprié
+- Des confusions et le choix de mots incorrects se produisent sans gêner la communication
+
+8. Maîtrise de l'orthographe (0-1)
+- Peut produire un écrit suivi, clair et intelligible
+- L'orthographe est relativement exacte mais peut subir l'influence de la langue maternelle
+- Peut orthographier correctement la plupart des mots attendus à ce niveau
+
+COMPÉTENCE GRAMMATICALE / ORTHOGRAPHE GRAMMATICALE :
+
+9. Choix des formes (0-4)
+- A un bon contrôle grammatical
+- Des erreurs non systématiques peuvent encore se produire sans conduire à des malentendus
+
+10. Degré d'élaboration des phrases (0-2)
+- Peut utiliser de manière appropriée des constructions variées
+
+PROMPT ORIGINAL :
+"${prompt}"
+
+PRODUCTION DE L'UTILISATEUR :
+"${userInput}"
+
+FORMAT DE RÉPONSE OBLIGATOIRE :
+
+- Note finale : X / 25
+- Détail par critère :
+  • Respect de la consigne : X / 2
+  • Correction sociolinguistique : X / 2
+  • Capacité à présenter des faits : X / 3
+  • Capacité à argumenter une prise de position : X / 3
+  • Cohérence et cohésion : X / 4
+  • Étendue du vocabulaire : X / 2
+  • Maîtrise du vocabulaire : X / 2
+  • Maîtrise de l'orthographe : X / 1
+  • Choix des formes : X / 4
+  • Degré d'élaboration des phrases : X / 2
 - Commentaire global (court, clair, encourageant)
 `;
 
