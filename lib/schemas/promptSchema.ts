@@ -1,11 +1,15 @@
-import { Language, LanguageNames, Level, MODEL } from "@/app/types";
+import { Language, LanguageNames, Level, MODEL, Prompt } from "@/app/types";
 import mistral from "../mistral";
 import z from 'zod';
 import { writingPrompt } from "./prompts";
+import { promptToDatabase } from "../db";
+import logger from "../logger";
 
 export const promptResultSchema = z.object({
+    id: z.number().optional(),
     prompt: z.string(),
     language: z.string(),
+    topic: z.string(),
     level: z.string()
 });
 
@@ -38,9 +42,10 @@ export const promptSchema = async (language: Language, level: Level): Promise<Pr
                     properties: {
                         prompt: { type: 'string' },
                         language: { type: 'string' },
+                        topic: { type: 'string' },
                         level: { type: 'string' }
                     },
-                    required: ['prompt', 'language', 'level'],
+                    required: ['prompt', 'language', 'level', 'topic'],
                     additionalProperties: false
                 }
             }
@@ -64,6 +69,18 @@ export const promptSchema = async (language: Language, level: Level): Promise<Pr
     if (!result.success) {
         throw new Error(`Model returned invalid prompt schema: ${JSON.stringify(result.error.errors)}`);
     }
+
+    const promptData: Prompt = {
+        language: result.data.language,
+        level: result.data.level,
+        topic: result.data.topic,
+        prompt_text: result.data.prompt,
+    };
+
+    const newPrompt = await promptToDatabase(promptData);
+    logger.debug('Saved prompt with ID:', newPrompt.rows[0].id);
+
+    result.data.id = newPrompt.rows[0].id;
 
     return result.data;
 }

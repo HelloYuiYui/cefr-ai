@@ -1,7 +1,13 @@
 import { Language, Level, Levels, MODEL } from "@/app/types";
 import mistral from "../mistral";
-import { baseline, frenchA1, germanB1 } from "./prompts";
-import { frenchA1Schema, frenchA1SchemaJson, germanB1Schema, germanB1SchemaJson } from './reviews';
+import { baseline, frenchA1, frenchA2, frenchB1, frenchB2, germanB1 } from "./prompts";
+import {
+    frenchA1Schema, frenchA1SchemaJson,
+    frenchA2Schema, frenchA2SchemaJson,
+    frenchB1Schema, frenchB1SchemaJson,
+    frenchB2Schema, frenchB2SchemaJson,
+    germanB1Schema, germanB1SchemaJson
+} from './reviews';
 import logger from '@/lib/logger';
 import z from 'zod';
 
@@ -14,6 +20,9 @@ import z from 'zod';
  * @returns A structured review of the user's writing, including feedback on various aspects.
  */
 export type FrenchA1 = z.infer<typeof frenchA1Schema>;
+export type FrenchA2 = z.infer<typeof frenchA2Schema>;
+export type FrenchB1 = z.infer<typeof frenchB1Schema>;
+export type FrenchB2 = z.infer<typeof frenchB2Schema>;
 export type GermanB1 = z.infer<typeof germanB1Schema>;
 
 const defaultSchema = z.object({
@@ -43,7 +52,7 @@ const defaultSchemaJson = {
 
 export type DefaultReview = z.infer<typeof defaultSchema>;
 
-export type ReviewResult = FrenchA1 | GermanB1 | DefaultReview;
+export type ReviewResult = FrenchA1 | FrenchA2 | FrenchB1 | FrenchB2 | GermanB1 | DefaultReview;
 
 export const reviewGeneration = async (language: Language, level: Level, prompt: string, userInput: string): Promise<JSON> => {
     logger.debug('Generating review for', language, level);
@@ -71,8 +80,68 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
                     });
                     logger.debug('Generated review for French A1 level:', response.choices[0].message);
                     break;
+                case Levels.A2:
+                    response = await mistral.chat.complete({
+                        model: MODEL,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: frenchA2(prompt, userInput)
+                            }
+                        ],
+                        responseFormat: {
+                            type: 'json_schema',
+                            jsonSchema: {
+                                name: 'frenchA2',
+                                description: 'Feedback for A2 level French learner.',
+                                schemaDefinition: frenchA2SchemaJson
+                            }
+                        }
+                    });
+                    logger.debug('Generated review for French A2 level:', response.choices[0].message);
+                    break;
+                case Levels.B1:
+                    response = await mistral.chat.complete({
+                        model: MODEL,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: frenchB1(prompt, userInput)
+                            }
+                        ],
+                        responseFormat: {
+                            type: 'json_schema',
+                            jsonSchema: {
+                                name: 'frenchB1',
+                                description: 'Feedback for B1 level French learner.',
+                                schemaDefinition: frenchB1SchemaJson
+                            }
+                        }
+                    });
+                    logger.debug('Generated review for French B1 level:', response.choices[0].message);
+                    break;
+                case Levels.B2:
+                    response = await mistral.chat.complete({
+                        model: MODEL,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: frenchB2(prompt, userInput)
+                            }
+                        ],
+                        responseFormat: {
+                            type: 'json_schema',
+                            jsonSchema: {
+                                name: 'frenchB2',
+                                description: 'Feedback for B2 level French learner.',
+                                schemaDefinition: frenchB2SchemaJson
+                            }
+                        }
+                    });
+                    logger.debug('Generated review for French B2 level:', response.choices[0].message);
+                    break;
             }
-            if (level === Levels.A1) break;
+            if (level === Levels.A1 || level === Levels.A2 || level === Levels.B1 || level === Levels.B2) break;
         case (Language.GERMAN):
             switch (level) {
                 case Levels.B1:

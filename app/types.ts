@@ -33,3 +33,19 @@ export const Levels = {
 export type Level = typeof Levels[keyof typeof Levels];
 
 export const MODEL = 'mistral-small-latest';
+
+// Database related types
+export interface Prompt {
+  language: string;
+  level: string;
+  topic?: string;
+  prompt_text: string;
+}
+
+export interface Response {
+  id: string;
+  prompt_id: string;
+  response_text: string;
+  created_at: string;
+  metadata?: any;
+}
