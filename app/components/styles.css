@@ -1,3 +1,10 @@
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+}
+
 .main {
     padding: 2rem;
     font-family: Arial, sans-serif;
@@ -118,4 +125,372 @@
     border: 1px solid black;
     margin-top: 1rem;
     padding: 0.5rem;
+}
+
+/* App Layout */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* Header Styles */
+.header {
+    background-color: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 1rem 2rem;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #008CBA;
+    text-decoration: none;
+}
+
+.logo:hover {
+    color: #006d8f;
+}
+
+.nav {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.nav-link:hover {
+    background-color: #f5f5f5;
+}
+
+.nav-link.active {
+    color: #008CBA;
+    background-color: #e6f4f8;
+}
+
+.nav-link-disabled {
+    color: #999;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-link-disabled:hover {
+    background-color: transparent;
+}
+
+.coming-soon-badge {
+    background-color: #f0f0f0;
+    color: #666;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    font-weight: normal;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #f9f9f9;
+    border-top: 1px solid #e5e5e5;
+    padding: 1.5rem 2rem;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Landing Page */
+.landing-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Hero Section */
+.hero {
+    width: 100%;
+    max-width: 800px;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+.languages-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.languages-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.language-flags {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.language-item {
+    font-size: 1rem;
+    color: #333;
+}
+
+.hero-cta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.cta-primary {
+    background-color: #008CBA;
+    color: white;
+}
+
+.cta-primary:hover {
+    background-color: #006d8f;
+}
+
+.cta-secondary {
+    background-color: #f5f5f5;
+    color: #666;
+    border: 1px solid #e5e5e5;
+}
+
+.cta-secondary:hover {
+    background-color: #eee;
+}
+
+/* Placeholder Page (Reading Coming Soon) */
+.placeholder-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    padding: 2rem;
+}
+
+.placeholder-content {
+    text-align: center;
+    max-width: 500px;
+}
+
+.placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.placeholder-title {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.placeholder-badge {
+    display: inline-block;
+    background-color: #f0f0f0;
+    color: #666;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.placeholder-description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.placeholder-link {
+    color: #008CBA;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.placeholder-link:hover {
+    text-decoration: underline;
+}
+
+/* Landing Page Selection Section */
+.selection-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.selection-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.selection-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #555;
+}
+
+/* Language Buttons */
+.language-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.language-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.language-button:hover {
+    border-color: #008CBA;
+    background-color: #f0f8fa;
+}
+
+.language-button.selected {
+    border-color: #008CBA;
+    background-color: #e6f4f8;
+    box-shadow: 0 0 0 1px #008CBA;
+}
+
+.language-flag {
+    font-size: 1.25rem;
+}
+
+.language-name {
+    color: #333;
+    font-weight: 500;
+}
+
+/* Level Buttons */
+.level-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.level-button {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #555;
+    min-width: 50px;
+}
+
+.level-button:hover {
+    border-color: #008CBA;
+    background-color: #f0f8fa;
+    color: #008CBA;
+}
+
+.level-button.selected {
+    border-color: #008CBA;
+    background-color: #008CBA;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 140, 186, 0.3);
+}
+
+/* Loading State */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+}
+
+.loading-text {
+    font-size: 1.1rem;
+    color: #666;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
 }

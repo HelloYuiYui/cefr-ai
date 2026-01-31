@@ -1,4 +1,17 @@
 {
+    "Navigation": {
+        "writing": "Écriture",
+        "reading": "Lecture",
+        "comingSoon": "Bientôt disponible"
+    },
+    "Landing": {
+        "heroTitle": "Maîtrisez l'écriture",
+        "heroSubtitle": "Obtenez des commentaires alimentés par l'IA sur votre écriture, alignés sur les normes du CECR. Pratiquez en anglais, allemand ou français aux niveaux A1 à C2.",
+        "selectLanguage": "Sélectionner la langue",
+        "selectLevel": "Sélectionner le niveau",
+        "startWriting": "Commencer l'exercice d'écriture",
+        "readingPractice": "Exercice de lecture"
+    },
     "Home" : {
         "title": "Bienvenue dans l'assistant d'exercices CECR!",
         "subtitle": "Choisissez une langue et un niveau pour commencer.",

@@ -1,4 +1,17 @@
 {
+    "Navigation": {
+        "writing": "Schreiben",
+        "reading": "Lesen",
+        "comingSoon": "Demnächst"
+    },
+    "Landing": {
+        "heroTitle": "Meistern Sie das Schreiben",
+        "heroSubtitle": "Erhalten Sie KI-gestütztes Feedback zu Ihrem Schreiben, abgestimmt auf GER-Standards. Üben Sie auf Englisch, Deutsch oder Französisch auf den Niveaus A1 bis C2.",
+        "selectLanguage": "Sprache wählen",
+        "selectLevel": "Niveau wählen",
+        "startWriting": "Schreibübung starten",
+        "readingPractice": "Leseübung"
+    },
     "Home" : {
         "title": "Willkommen beim CEFR Übungsassistenten!",
         "subtitle": "Entscheiden Sie sich für eine Sprache und ein Niveau, um zu beginnen.",

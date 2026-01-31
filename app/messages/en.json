@@ -1,4 +1,17 @@
 {
+    "Navigation": {
+        "writing": "Writing",
+        "reading": "Reading",
+        "comingSoon": "Coming Soon"
+    },
+    "Landing": {
+        "heroTitle": "Master Writing in Any Language",
+        "heroSubtitle": "Get AI-powered feedback on your writing, aligned to CEFR standards. Practice in English, German, or French at levels A1 to C2.",
+        "selectLanguage": "Select Language",
+        "selectLevel": "Select Level",
+        "startWriting": "Start Writing Practice",
+        "readingPractice": "Reading Practice"
+    },
     "Home" : {
         "title": "Welcome to the CEFR Writing Assistant!",
         "subtitle": "Choose a language and a level to get started.",
