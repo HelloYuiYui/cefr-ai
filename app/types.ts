@@ -9,7 +9,7 @@ export const Language = {
     GERMAN: 'de',
     FRENCH: 'fr',
     ENGLISH: 'en',
-    DEFAULT: 'en'
+    DEFAULT: 'de'
 } as const;
 export type Language = typeof Language[keyof typeof Language];
 export const LanguageNames = Object.fromEntries(
@@ -48,4 +48,24 @@ export interface Response {
   response_text: string;
   created_at: string;
   metadata?: any;
+}
+
+export interface Question {
+  question: string;
+  options: string[];
+  correctAnswer: number;
+}
+
+export interface Reading {
+  id?: number;
+  text: string;
+  language: string;
+  topic: string;
+  level: string;
+  questions: Question[];
+}
+
+export interface UserAnswer {
+  questionIndex: number;
+  selectedAnswer: number;
 }

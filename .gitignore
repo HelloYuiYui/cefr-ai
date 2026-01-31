@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# random
+claude.md
+marking_schemes/*
+cefr_ai_dump.sql
+tests/*
+vitest*

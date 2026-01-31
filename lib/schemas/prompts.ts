@@ -29,14 +29,14 @@ Topics:
 - Languages and the language sphere
 
 Apply CEFR-appropriate topic constraints:
-- **A1–A2:** Prefer concrete, personal, and everyday topics  
+- **A1–A2:** Prefer concrete, personal, and everyday topics
   (e.g. food, travelling, family, hobbies, simple culture, daily routines)
-- **B1:** Allow a mix of everyday and abstract topics, but keep tasks experience-based  
+- **B1:** Allow a mix of everyday and abstract topics, but keep tasks experience-based
   (e.g. education, technology in daily life, work experiences, media habits, environment)
-- **B2+:** Freely include abstract and societal topics  
+- **B2+:** Freely include abstract and societal topics
   (e.g. contemporary society, public health, economy, urban issues, professional life)
 
-If a topic is complex, adapt it to the learner’s level by:
+If a topic is complex, adapt it to the learner's level by:
 - Narrowing the scope
 - Personalising the perspective
 - Focusing on concrete examples or opinions
@@ -45,13 +45,13 @@ If a topic is complex, adapt it to the learner’s level by:
 TASK DESIGN RULES
 
 The prompt should:
-- Require typical language functions for the level  
+- Require typical language functions for the level
   (e.g. describing, narrating, explaining, giving reasons, expressing opinions)
 - Be open-ended but clearly framed
-- Include a suggested word count range appropriate to the level 
+- Include a suggested word count range appropriate to the level
 `
 }
-// TODO the prompt should have a recommended word length appropriate to the CEFR level
+// DONE the prompt should have a recommended word length appropriate to the CEFR level
 // TODO Give the name of the topic in the response as well for recording purposes
 // TODO If I keep track of the given prompts we can avoid having to send this to Mistral every time
 
@@ -71,6 +71,86 @@ The prompt should:
 // - Output ONLY the writing prompt
 // - Do NOT include explanations, instructions, headings, or examples
 // - Keep the description concise and clear
+
+export const readingPrompt = (level: string, language: string) => {
+    return `
+You are generating a reading comprehension task in ${language} for a learner at **CEFR level ${level}**.
+
+Create ONE engaging reading text with FOUR multiple-choice comprehension questions that:
+- Matches the communicative and cognitive demands of the given CEFR level
+- Uses vocabulary, text types, and language complexity appropriate for that level
+- Is realistic and suitable for a Goethe Zertifikat ${level} exam (if German)
+- Has an appropriate length for the level (B1: 150-250 words)
+
+---
+TOPIC SELECTION RULES
+
+Choose ONE topic from the list below. Vary topics across prompts.
+
+Topics:
+- Contemporary society
+- Environment and ecology
+- Work and employment
+- Consumption and economy
+- Education
+- Culture
+- Technology
+- Public health
+- Media and communication
+- Family and social relations
+- Urban life and management
+- Food, eating, and cooking
+- Tourism and travelling
+- Languages and the language sphere
+
+Apply CEFR-appropriate topic constraints:
+- **A1–A2:** Prefer concrete, personal, and everyday topics
+  (e.g. food, travelling, family, hobbies, simple culture, daily routines)
+- **B1:** Allow a mix of everyday and abstract topics, but keep tasks experience-based
+  (e.g. education, technology in daily life, work experiences, media habits, environment)
+- **B2+:** Freely include abstract and societal topics
+  (e.g. contemporary society, public health, economy, urban issues, professional life)
+
+If a topic is complex, adapt it to the learner's level by:
+- Narrowing the scope
+- Personalising the perspective
+- Focusing on concrete examples or opinions
+
+---
+TEXT DESIGN RULES
+
+The reading text should:
+- Be written entirely in ${language}
+- Use authentic text types for the level (e.g., articles, blog posts, announcements, emails, notices)
+- Have clear and coherent structure
+- Use vocabulary and grammar appropriate for ${level}
+- Be interesting and engaging
+
+---
+QUESTION DESIGN RULES
+
+Create EXACTLY FOUR multiple-choice questions:
+- Each question should have EXACTLY FOUR options (A, B, C, D)
+- EXACTLY ONE option must be correct
+- The other three options must be plausible but incorrect
+- Questions should test different aspects: main idea, details, inference, vocabulary
+- Questions and ALL options should be written in ${language}
+- correctAnswer should be the index (0-3) of the correct option in the options array
+
+---
+OUTPUT FORMAT
+
+Provide your response in the following JSON structure:
+- text: the reading passage in ${language}
+- language: the language code
+- topic: the topic name from the list
+- level: the CEFR level
+- questions: array of 4 question objects, each with:
+  - question: the question text in ${language}
+  - options: array of 4 answer options in ${language}
+  - correctAnswer: index (0-3) of the correct option
+`
+}
 
 export const frenchA1 = (prompt: string, userInput: string) => `
 Vous êtes un correcteur expert du CECR (CEFR) spécialisé dans l'évaluation de la production écrite en français langue étrangère.

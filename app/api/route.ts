@@ -1,7 +1,7 @@
 'use server'
 import { cookies } from "next/headers";
 import { Language, Level } from '../types';
-import { promptSchema, reviewGeneration } from '@/lib';
+import { promptSchema, readingSchema, reviewGeneration } from '@/lib';
 import logger from '@/lib/logger';
 
 export async function GET() {
@@ -81,10 +81,20 @@ function stringifyReview (review: JSON) {
 
 /**
  * Get a writing prompt for the given language and CEFR level.
- * @param language 
- * @param level 
+ * @param language
+ * @param level
  * @returns An object containing the prompt, language, and level.
  */
 export async function getPrompt(language: Language, level: Level) {
     return promptSchema(language, level);
+}
+
+/**
+ * Get a reading comprehension text with questions for the given language and CEFR level.
+ * @param language
+ * @param level
+ * @returns An object containing the reading text, questions, language, and level.
+ */
+export async function getReading(language: Language, level: Level) {
+    return readingSchema(language, level);
 }
