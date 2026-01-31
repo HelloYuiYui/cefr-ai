@@ -97,11 +97,11 @@ export default function ReadingPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen overflow-hidden">
+            <div className="min-h-screen overflow-hidden bg-gray-50">
                 <Starter />
                 <div className="contents p-8 w-full h-full">
                     <div className="loading-container">
-                        <p className="loading-text">Loading your reading text...</p>
+                        <p className="loading-text text-gray-700">Loading your reading text...</p>
                     </div>
                 </div>
             </div>
@@ -110,11 +110,11 @@ export default function ReadingPage() {
 
     if (!reading) {
         return (
-            <div className="min-h-screen overflow-hidden">
+            <div className="min-h-screen overflow-hidden bg-gray-50">
                 <Starter />
                 <div className="contents p-8 w-full h-full">
                     <div className="loading-container">
-                        <p className="loading-text">Unable to load reading text. Please try again.</p>
+                        <p className="loading-text text-gray-700">Unable to load reading text. Please try again.</p>
                     </div>
                 </div>
             </div>
@@ -124,15 +124,15 @@ export default function ReadingPage() {
     const score = submitted ? calculateScore() : 0;
 
     return (
-        <div className="min-h-screen overflow-hidden">
+        <div className="min-h-screen overflow-hidden bg-gray-50">
             <Starter />
             <div className="contents p-8 w-full h-full">
                 <div className="flex gap-6 h-full">
                     <div className="w-1/2 flex flex-col gap-4">
                         <div className="bg-white rounded-lg shadow-md p-6">
-                            <h2 className="text-2xl font-bold mb-4">Reading Text</h2>
+                            <h2 className="text-2xl font-bold mb-4 text-gray-900">Reading Text</h2>
                             <div className="prose max-w-none">
-                                <p className="whitespace-pre-wrap text-lg leading-relaxed">{reading.text}</p>
+                                <p className="whitespace-pre-wrap text-lg leading-relaxed text-gray-800">{reading.text}</p>
                             </div>
                             <div className="mt-4 text-sm text-gray-600">
                                 <span className="font-semibold">Topic:</span> {reading.topic} |
@@ -143,14 +143,14 @@ export default function ReadingPage() {
 
                     <div className="w-1/2 flex flex-col gap-4">
                         <div className="bg-white rounded-lg shadow-md p-6">
-                            <h2 className="text-2xl font-bold mb-4">Questions</h2>
+                            <h2 className="text-2xl font-bold mb-4 text-gray-900">Questions</h2>
                             {reading.questions.map((question, qIndex) => {
                                 const userAnswer = userAnswers.find((ua) => ua.questionIndex === qIndex);
                                 const isCorrect = submitted && userAnswer && userAnswer.selectedAnswer === question.correctAnswer;
 
                                 return (
-                                    <div key={qIndex} className="mb-6 pb-6 border-b last:border-b-0">
-                                        <p className="font-semibold mb-3 text-lg">
+                                    <div key={qIndex} className="mb-6 pb-6 border-b border-gray-200 last:border-b-0">
+                                        <p className="font-semibold mb-3 text-lg text-gray-900">
                                             {qIndex + 1}. {question.question}
                                         </p>
                                         <div className="space-y-2">
@@ -167,12 +167,12 @@ export default function ReadingPage() {
                                                         disabled={submitted}
                                                         className={`w-full text-left p-3 rounded border-2 transition-colors ${
                                                             showCorrect
-                                                                ? 'bg-green-100 border-green-500'
+                                                                ? 'bg-green-100/30 border-green-500 text-gray-900'
                                                                 : showIncorrect
-                                                                ? 'bg-red-100 border-red-500'
+                                                                ? 'bg-red-100/30 border-red-500 text-gray-900'
                                                                 : isSelected
-                                                                ? 'bg-blue-100 border-blue-500'
-                                                                : 'bg-white border-gray-300 hover:border-blue-300'
+                                                                ? 'bg-blue-100/30 border-blue-500 text-gray-900'
+                                                                : 'bg-white border-gray-300 hover:border-blue-300-500 text-gray-900'
                                                         } ${submitted ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                                                     >
                                                         <span className="font-medium">{String.fromCharCode(65 + oIndex)}.</span> {option}
@@ -181,7 +181,7 @@ export default function ReadingPage() {
                                             })}
                                         </div>
                                         {submitted && (
-                                            <div className={`mt-2 text-sm ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                                            <div className={`mt-2 text-sm font-semibold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
                                                 {isCorrect ? '✓ Correct!' : '✗ Incorrect'}
                                             </div>
                                         )}
@@ -192,23 +192,23 @@ export default function ReadingPage() {
                             {!submitted ? (
                                 <button
                                     onClick={handleSubmit}
-                                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors mt-4"
+                                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700-600 transition-colors mt-4"
                                 >
                                     Submit Answers
                                 </button>
                             ) : (
                                 <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-                                    <h3 className="text-xl font-bold mb-2">Results</h3>
-                                    <p className="text-lg">
+                                    <h3 className="text-xl font-bold mb-2 text-gray-900">Results</h3>
+                                    <p className="text-lg text-gray-800">
                                         You got <span className="font-bold text-blue-600">{score}</span> out of{' '}
-                                        <span className="font-bold">{reading.questions.length}</span> correct!
+                                        <span className="font-bold text-gray-900">{reading.questions.length}</span> correct!
                                     </p>
                                     <p className="mt-2 text-gray-700">
                                         Score: {Math.round((score / reading.questions.length) * 100)}%
                                     </p>
                                     <button
                                         onClick={() => window.location.reload()}
-                                        className="mt-4 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors"
+                                        className="mt-4 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700-600 transition-colors"
                                     >
                                         Try Another Text
                                     </button>

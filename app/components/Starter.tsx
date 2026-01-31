@@ -6,7 +6,7 @@ export default function Starter() {
 
     return (
         <div className="starterContainer">
-            <h1 className="text-2xl font-bold">{t('title')}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
             <p className="text-gray-700">{t('subtitle')}</p>    
         </div>
     );
