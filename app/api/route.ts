@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
     const response = await reviewGeneration(language, level, prompt, input);
     return new Response(JSON.stringify(response), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' } 
     });
 }
 
@@ -50,18 +50,32 @@ export async function reviewAnswer(language: Language, level: Level, prompt: str
 function stringifyReview (review: JSON) {
     let result = '';
     let achieved = 0;
-    let oufOf = 0;
+    let outOf = 0;
+
+    // First pass: get outOf value
     for (const [key, value] of Object.entries(review)) {
         if (key === 'outOf') {
-            oufOf = value as number;
+            outOf = value as number;
+            break;
+        }
+    }
+
+    // Second pass: build result string and sum scores
+    // Exclude non-scoring fields from the sum (feedback text and metadata)
+    const excludeFromSum = ['outOf', 'language', 'level', 'name'];
+
+    for (const [key, value] of Object.entries(review)) {
+        if (key === 'outOf') {
             continue;
         }
         result += `${key}:${value}\n`;
-        if (typeof value === 'number') {
+        // Only sum numeric values that are scoring criteria (not feedback text)
+        if (typeof value === 'number' && !excludeFromSum.includes(key)) {
             achieved += value;
         }
     }
-    result += `totalScore: ${achieved}/${oufOf}${oufOf === 100 ? "" : ` (${(achieved / oufOf * 100).toFixed(0)}%)`}\n`;
+
+    result += `totalScore: ${achieved}/${outOf}${outOf === 100 ? "" : ` (${(achieved / outOf * 100).toFixed(0)}%)`}\n`;
     return result;
 }
 
