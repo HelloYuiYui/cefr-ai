@@ -89,7 +89,7 @@ export default function WritingPage() {
         return (
             <div className="min-h-screen overflow-hidden">
                 <Starter />
-                <div className="contents p-8 w-full h-full">
+                <div className="contents p-4 md:p-8 w-full h-full">
                     <div className="loading-container">
                         <p className="loading-text">Loading your writing prompt...</p>
                     </div>
@@ -102,7 +102,7 @@ export default function WritingPage() {
         <div className="min-h-screen overflow-hidden">
             <Starter />
 
-            <div className="contents p-8 w-full h-full">
+            <div className="contents p-4 md:p-8 w-full h-full">
                 {
                     state === Step.SELECTION &&
                     <div>
@@ -111,9 +111,13 @@ export default function WritingPage() {
                 }
                 {
                     state === Step.PRACTICE &&
-                    <div className="flex gap-4 h-full">
-                        <div className="w-1/2"><Prompt prompt={prompt} /></div>
-                        <div className="w-1/2"><Form proceedToReview={proceedToReview} /></div>
+                    <div className="flex flex-col md:flex-row gap-4 md:gap-6 h-full w-full">
+                        <div className="w-full md:w-1/2">
+                            <Prompt prompt={prompt} />
+                        </div>
+                        <div className="w-full md:w-1/2">
+                            <Form proceedToReview={proceedToReview} />
+                        </div>
                     </div>
                 }
                 {
