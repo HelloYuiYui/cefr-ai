@@ -1,4 +1,4 @@
-export const writingPrompt = (level: string, language: string) => {
+export const writingPrompt = (level: string, language: string, topic: string) => {
     return `
 You are generating a writing task in ${language} for a learner at **CEFR level ${level}**.
 
@@ -6,27 +6,7 @@ Create ONE engaging writing prompt that:
 - Matches the communicative and cognitive demands of the given CEFR level
 - Uses vocabulary, text types, and language functions appropriate for that level
 - Encourages creativity, but does not exceed the expected complexity of the level
-
----
-TOPIC SELECTION RULES
-
-Choose ONE topic from the list below. Vary topics across prompts.
-
-Topics:
-- Contemporary society
-- Environment and ecology
-- Work and employment
-- Consumption and economy
-- Education
-- Culture
-- Technology
-- Public health
-- Media and communication
-- Family and social relations
-- Urban life and management
-- Food, eating, and cooking
-- Tourism and travelling
-- Languages and the language sphere
+- That is in the topic of ${topic}. 
 
 Apply CEFR-appropriate topic constraints:
 - **A1–A2:** Prefer concrete, personal, and everyday topics
@@ -72,7 +52,7 @@ The prompt should:
 // - Do NOT include explanations, instructions, headings, or examples
 // - Keep the description concise and clear
 
-export const readingPrompt = (level: string, language: string) => {
+export const readingPrompt = (level: string, language: string, topic: string) => {
     return `
 You are generating a reading comprehension task in ${language} for a learner at **CEFR level ${level}**.
 
@@ -80,28 +60,7 @@ Create ONE engaging reading text with FOUR multiple-choice comprehension questio
 - Matches the communicative and cognitive demands of the given CEFR level
 - Uses vocabulary, text types, and language complexity appropriate for that level
 - Is realistic and suitable for a Goethe Zertifikat ${level} exam (if German)
-- Has an appropriate length for the level (B1: 150-250 words)
-
----
-TOPIC SELECTION RULES
-
-Choose ONE topic from the list below. Vary topics across prompts.
-
-Topics:
-- Contemporary society
-- Environment and ecology
-- Work and employment
-- Consumption and economy
-- Education
-- Culture
-- Technology
-- Public health
-- Media and communication
-- Family and social relations
-- Urban life and management
-- Food, eating, and cooking
-- Tourism and travelling
-- Languages and the language sphere
+- That is in the topic of ${topic}.
 
 Apply CEFR-appropriate topic constraints:
 - **A1–A2:** Prefer concrete, personal, and everyday topics
@@ -121,10 +80,11 @@ TEXT DESIGN RULES
 
 The reading text should:
 - Be written entirely in ${language}
-- Use authentic text types for the level (e.g., articles, blog posts, announcements, emails, notices)
+- Use authentic text types for the level such as articles, blog posts, announcements, emails, notices.
 - Have clear and coherent structure
 - Use vocabulary and grammar appropriate for ${level}
 - Be interesting and engaging
+- Has an appropriate length for the level (A1: 30-80, A2: 50-100, B1: 150-250 words, B2: 200-300 words)
 
 ---
 QUESTION DESIGN RULES

@@ -2,7 +2,7 @@ import { Language, LanguageNames, Level, MODEL, Prompt } from "@/app/types";
 import mistral from "../mistral";
 import z from 'zod';
 import { writingPrompt } from "./prompts";
-import { promptToDatabase } from "../db";
+import { promptToDatabase, readingTextToDatabase } from "../db";
 import logger from "../logger";
 
 export const promptResultSchema = z.object({
@@ -33,6 +33,23 @@ export const readingResultSchema = z.object({
 export type QuestionResult = z.infer<typeof questionSchema>;
 export type ReadingResult = z.infer<typeof readingResultSchema>;
 
+export const TOPICS = [
+    'Contemporary society',
+    'Environment and ecology',
+    'Work and employment',
+    'Consumption and economy',
+    'Education',
+    'Culture',
+    'Technology',
+    'Public health',
+    'Media and communication',
+    'Family and social relations',
+    'Urban life and management',
+    'Food, eating, and cooking',
+    'Tourism and travelling',
+    'Languages and the language sphere'
+] as const;
+
 /**
  * Get a writing prompt for the given language and CEFR level.
  * @param language 
@@ -41,13 +58,14 @@ export type ReadingResult = z.infer<typeof readingResultSchema>;
  * TODO : Could simplify this?
  */
 export const promptSchema = async (language: Language, level: Level): Promise<PromptResult> => {
+    const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
     const languageName = LanguageNames[language];
     const prompt = await mistral.chat.complete({
         model: MODEL,
         messages: [
             {
                 role: 'system',
-                content: writingPrompt(level, languageName)
+                content: writingPrompt(level, languageName, randomTopic)
             }
         ],
         responseFormat: { 
@@ -110,6 +128,7 @@ export const promptSchema = async (language: Language, level: Level): Promise<Pr
  * @returns An object containing the reading text, questions, language, and level.
  */
 export const readingSchema = async (language: Language, level: Level): Promise<ReadingResult> => {
+    const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
     const languageName = LanguageNames[language];
     const { readingPrompt } = await import("./prompts");
 
@@ -118,7 +137,7 @@ export const readingSchema = async (language: Language, level: Level): Promise<R
         messages: [
             {
                 role: 'system',
-                content: readingPrompt(level, languageName)
+                content: readingPrompt(level, languageName, randomTopic)
             }
         ],
         responseFormat: {
@@ -163,7 +182,7 @@ export const readingSchema = async (language: Language, level: Level): Promise<R
                 }
             }
         },
-        temperature: 1.2
+        temperature: 1.5
     });
 
     const content = prompt.choices?.[0]?.message?.content;
@@ -185,13 +204,13 @@ export const readingSchema = async (language: Language, level: Level): Promise<R
     }
 
     const readingData: Prompt = {
-        language: result.data.language,
+        language: LanguageNames[result.data.language],
         level: result.data.level,
         topic: result.data.topic,
         prompt_text: result.data.text,
     };
 
-    const newPrompt = await promptToDatabase(readingData);
+    const newPrompt = await readingTextToDatabase(readingData);
     logger.debug('Saved reading prompt with ID:', newPrompt.rows[0].id);
 
     result.data.id = newPrompt.rows[0].id;

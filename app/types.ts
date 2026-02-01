@@ -32,7 +32,7 @@ export const Levels = {
 } as const;
 export type Level = typeof Levels[keyof typeof Levels];
 
-export const MODEL = 'mistral-small-latest';
+export const MODEL = process.env.MODEL || 'mistral-small-latest';
 
 // Database related types
 export interface Prompt {

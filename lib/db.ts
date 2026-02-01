@@ -28,3 +28,22 @@ export const responseToDatabase = (promptId: string, responseText: string, metad
     const values = [promptId, responseText, metadata ? JSON.stringify(metadata) : null];
     return pool.query(query, values);
 };
+
+export const readingTextToDatabase = (prompt: Prompt) => {
+    const query = 
+    `INSERT INTO reading_texts (language, topic, level, prompt_text)
+     VALUES ($1, $2, $3, $4)
+     RETURNING id`;
+    const values = [prompt.language, prompt.topic, prompt.level, prompt.prompt_text];
+    return pool.query(query, values);
+};
+
+// Not functional yet.
+export const readingResponseToDatabase = (promptId: string, responseText: string, metadata?: any) => {
+    const query = 
+    `INSERT INTO reading_responses (prompt_id, response_text, metadata)
+     VALUES ($1, $2, $3)
+     RETURNING id`;
+    const values = [promptId, responseText, metadata ? JSON.stringify(metadata) : null];
+    return pool.query(query, values);
+};
