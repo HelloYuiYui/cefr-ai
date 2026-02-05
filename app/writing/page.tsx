@@ -10,7 +10,7 @@ import Review from "../components/Review";
 import logger from "@/lib/logger";
 
 const validLanguages = [Language.ENGLISH, Language.GERMAN, Language.FRENCH];
-const validLevels = [Levels.A1, Levels.A2, Levels.B1, Levels.B2, Levels.C1, Levels.C2];
+const validLevels = [Levels.A1, Levels.A2, Levels.B1, Levels.B2];
 
 export default function WritingPage() {
     const searchParams = useSearchParams();
@@ -21,18 +21,25 @@ export default function WritingPage() {
     const [userInput, setUserInput] = useState<string>('');
     const [result, setResult] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [hasError, setHasError] = useState<boolean>(false);
     const initializedRef = useRef(false);
 
     const fetchPromptAndProceed = async (lang: Language, lvl: Level) => {
         setIsLoading(true);
+        setHasError(false);
         try {
             logger.debug('Fetching prompt for', lang, lvl);
             const response = await getPrompt(lang, lvl);
-            setPrompt(response.prompt as string);
+            if ('error' in response) {
+                logger.warn('Rate limit or error:', response.error);
+                setHasError(true);
+            } else {
+                setPrompt(response.prompt as string);
+            }
             setState(Step.PRACTICE);
         } catch (error) {
             logger.error('Error fetching prompt:', error);
-            setPrompt('');
+            setHasError(true);
             setState(Step.PRACTICE);
         } finally {
             setIsLoading(false);
@@ -109,8 +116,16 @@ export default function WritingPage() {
                         <Selection language={language} changeLanguage={setLanguage} level={level} changeLevel={setLevel} proceedToPractice={proceedToPractice} />
                     </div>
                 }
-                {
-                    state === Step.PRACTICE &&
+                { // Error message alone if there's an error, no prompt or form shown.
+                    state === Step.PRACTICE && hasError &&
+                    <div className="flex justify-center items-center h-full w-full">
+                        <div className="w-full md:w-1/2">
+                            <Prompt prompt="An error occured, you might be submitting too frequently. Please try again later." />
+                        </div>
+                    </div>
+                }
+                { // Normal prompt and form if no error. Still show the practice step even if there's an error, to display the message in the prompt component.
+                    state === Step.PRACTICE && !hasError &&
                     <div className="flex flex-col md:flex-row gap-4 md:gap-6 h-full w-full">
                         <div className="w-full md:w-1/2">
                             <Prompt prompt={prompt} />

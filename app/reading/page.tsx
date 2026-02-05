@@ -18,16 +18,24 @@ export default function ReadingPage() {
     const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
     const [submitted, setSubmitted] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [hasError, setHasError] = useState<boolean>(false);
     const initializedRef = useRef(false);
 
     const fetchReadingText = async (lang: Language, lvl: Level) => {
         setIsLoading(true);
+        setHasError(false);
         try {
             logger.debug('Fetching reading text for', lang, lvl);
             const response = await getReading(lang, lvl);
-            setReading(response as Reading);
+            if ('error' in response) {
+                logger.warn('Rate limit or error:', response.error);
+                setHasError(true);
+            } else {
+                setReading(response as Reading);
+            }
         } catch (error) {
             logger.error('Error fetching reading text:', error);
+            setHasError(true);
         } finally {
             setIsLoading(false);
         }
@@ -102,6 +110,21 @@ export default function ReadingPage() {
                 <div className="contents p-4 md:p-8 w-full h-full">
                     <div className="loading-container">
                         <p className="loading-text text-gray-700">Loading your reading text...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (hasError) {
+        return (
+            <div className="min-h-screen overflow-hidden bg-gray-50">
+                <Starter />
+                <div className="contents p-4 md:p-8 w-full h-full">
+                    <div className="flex justify-center items-center h-full w-full">
+                        <div className="bg-white rounded-lg shadow-md p-4 md:p-6 text-center">
+                            <p className="text-base md:text-lg text-gray-800">An error occured, you might be submitting too frequently. Please try again later.</p>
+                        </div>
                     </div>
                 </div>
             </div>
