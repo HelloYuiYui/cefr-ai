@@ -31,8 +31,8 @@ export default function Selection({ language, changeLanguage, level, changeLevel
                         <option value={Levels.A2}>{Levels.A2}</option>
                         <option value={Levels.B1}>{Levels.B1}</option>
                         <option value={Levels.B2}>{Levels.B2}</option>
-                        <option value={Levels.C1}>{Levels.C1}</option>
-                        <option value={Levels.C2}>{Levels.C2}</option>
+                        {/* <option value={Levels.C1}>{Levels.C1}</option>
+                        <option value={Levels.C2}>{Levels.C2}</option> */}
                     </select>
                 </div>
                 <button className="proceedButton w-full md:w-auto text-sm md:text-base min-h-[44px] mt-4" type="submit">{t('proceed')}</button>

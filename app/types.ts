@@ -26,8 +26,8 @@ export const Levels = {
     A2: 'A2',
     B1: 'B1',
     B2: 'B2',
-    C1: 'C1',
-    C2: 'C2',
+    // C1: 'C1',
+    // C2: 'C2',
     DEFAULT: 'B1'
 } as const;
 export type Level = typeof Levels[keyof typeof Levels];
