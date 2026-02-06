@@ -2,7 +2,9 @@
     "Navigation": {
         "writing": "Écriture",
         "reading": "Lecture",
-        "comingSoon": "Bientôt disponible"
+        "comingSoon": "Bientôt disponible",
+        "login": "Connexion",
+        "account": "Compte"
     },
     "Landing": {
         "heroTitle": "Maîtrisez l'écriture",
@@ -65,5 +67,38 @@
         "wortschatz": "Wortschatz",
         "strukturen": "Strukturen",
         "kurzerPruefkommentar": "Prüfkommentar"
+    },
+    "Auth": {
+        "loginTitle": "Connexion",
+        "signupTitle": "Inscription",
+        "username": "Nom d'utilisateur",
+        "email": "E-mail",
+        "password": "Mot de passe",
+        "confirmPassword": "Retaper le mot de passe",
+        "login": "Se connecter",
+        "signup": "S'inscrire",
+        "loading": "Chargement...",
+        "haveAccount": "Vous avez déjà un compte ?",
+        "loginHere": "Connectez-vous ici",
+        "noAccount": "Pas encore de compte ?",
+        "signupHere": "Inscrivez-vous ici",
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "emailExists": "Cet e-mail est déjà enregistré",
+        "invalidCredentials": "E-mail ou mot de passe invalide",
+        "genericError": "Une erreur s'est produite. Veuillez réessayer.",
+        "passwordError": {
+            "minLength": "Le mot de passe doit contenir au moins 8 caractères",
+            "uppercase": "Le mot de passe doit contenir au moins une majuscule",
+            "lowercase": "Le mot de passe doit contenir au moins une minuscule",
+            "number": "Le mot de passe doit contenir au moins un chiffre",
+            "special": "Le mot de passe doit contenir au moins un caractère spécial"
+        }
+    },
+    "Account": {
+        "loading": "Chargement...",
+        "user": "Utilisateur",
+        "underConstruction": "En construction",
+        "comingSoon": "Votre tableau de bord arrive bientôt. Vous pourrez y consulter vos réponses précédentes et suivre vos progrès.",
+        "signout": "Se déconnecter"
     }
 }

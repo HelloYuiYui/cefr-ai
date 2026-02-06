@@ -3,7 +3,7 @@ import { Redis } from '@upstash/redis';
 import { headers } from 'next/headers';
 
 // Rate limiter configuration: 10 requests per 60 seconds per IP
-const RATE_LIMIT_REQUESTS = 1;
+const RATE_LIMIT_REQUESTS = 10;
 const RATE_LIMIT_WINDOW = '60 s';
 
 const redis = new Redis({

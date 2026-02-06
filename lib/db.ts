@@ -16,19 +16,54 @@ export const promptToDatabase = (prompt: Prompt) => {
     `INSERT INTO prompts (language, topic, level, prompt_text)
      VALUES ($1, $2, $3, $4)
      RETURNING id`;
-    const values = [prompt.language, prompt.topic, prompt.level, prompt.prompt_text];
+    const values = [prompt.language, prompt.topic, prompt.level, prompt.prompt];
     return pool.query(query, values);
 };
 
-// Not functional yet. Must connect with user account system to associate responses with users, and implement a way to link responses to specific prompts.
-export const responseToDatabase = (promptId: string, responseText: string, metadata?: any) => {
-    const query = 
-    `INSERT INTO responses (prompt_id, response_text, metadata)
-     VALUES ($1, $2, $3)
+/**
+ * Saves a user response to the database. TODO check if user_id connection works authomatically on supabase. 
+ * @param promptId - UUID of the associated prompt
+ * @param responseText - The user's response text
+ * @param userId - UUID of the user (from Supabase Auth)
+ * @param grade - Grade achieved as percentage (0-100)
+ * @param metadata - Optional JSON metadata
+ */
+export const responseToDatabase = (
+    userId: string,
+    promptId: string,
+    responseText: string,
+    grade?: number,
+    gradePercentage?: number,
+    metadata?: Record<string, unknown>
+) => {
+    const insertQuery =
+    `INSERT INTO responses (user_id, prompt_id, response_text, grade, grade_percentage, metadata)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING id`;
-    const values = [promptId, responseText, metadata ? JSON.stringify(metadata) : null];
-    return pool.query(query, values);
+    const values = [
+        userId,
+        promptId,
+        responseText,
+        grade ?? null,
+        gradePercentage ?? null,
+        metadata ? JSON.stringify(metadata) : null
+    ];
+    return pool.query(insertQuery, values);
 };
+
+/**
+//  * Retrieves all responses for a specific user.
+//  * @param userId - UUID of the user
+//  */
+// export const getResponsesByUserId = (userId: string) => {
+//     const selectQuery =
+//     `SELECT r.*, p.prompt_text, p.language, p.level, p.topic
+//      FROM responses r
+//      LEFT JOIN prompts p ON r.prompt_id = p.id
+//      WHERE r.user_id = $1
+//      ORDER BY r.created_at DESC`;
+//     return pool.query(selectQuery, [userId]);
+// };
 
 /**
  * Saves a reading text with its questions to the database.

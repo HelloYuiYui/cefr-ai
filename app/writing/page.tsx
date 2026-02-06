@@ -3,11 +3,12 @@ import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Form, Starter } from "../components";
 import Selection from "../components/Selection";
-import { Step, Language, Level, Levels } from "../types";
-import Prompt from "../components/Prompt";
+import { Step, Language, Level, Levels, Prompt } from "../types";
 import { getPrompt, languageChange, reviewAnswer } from "../api/route";
 import Review from "../components/Review";
 import logger from "@/lib/logger";
+import PromptComponent from "../components/Prompt";
+import { useAuth } from "../context/AuthContext";
 
 const validLanguages = [Language.ENGLISH, Language.GERMAN, Language.FRENCH];
 const validLevels = [Levels.A1, Levels.A2, Levels.B1, Levels.B2];
@@ -17,12 +18,13 @@ export default function WritingPage() {
     const [state, setState] = useState<Step>(Step.SELECTION);
     const [language, setLanguage] = useState<Language>(Language.DEFAULT);
     const [level, setLevel] = useState<Level>(Levels.DEFAULT);
-    const [prompt, setPrompt] = useState<string>('');
+    const [prompt, setPrompt] = useState<Prompt>(); // Change this to Prompt type if you want to include more info like prompt ID, topic, etc.
     const [userInput, setUserInput] = useState<string>('');
     const [result, setResult] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasError, setHasError] = useState<boolean>(false);
     const initializedRef = useRef(false);
+    const { user, loading: authLoading } = useAuth();
 
     const fetchPromptAndProceed = async (lang: Language, lvl: Level) => {
         setIsLoading(true);
@@ -34,7 +36,7 @@ export default function WritingPage() {
                 logger.warn('Rate limit or error:', response.error);
                 setHasError(true);
             } else {
-                setPrompt(response.prompt as string);
+                setPrompt(response as Prompt);
             }
             setState(Step.PRACTICE);
         } catch (error) {
@@ -53,7 +55,8 @@ export default function WritingPage() {
     const proceedToReview = async (userInput: string) => {
         try {
             setUserInput(userInput);
-            const response = await reviewAnswer(language, level, prompt, userInput);
+            logger.debug(user);
+            const response = await reviewAnswer(user?.id || "anonymous", prompt!, userInput); // TODO: Handle case where prompt is undefined, though it shouldn't be if flow is followed correctly.
             logger.debug('Received analysis:', response);
             setResult(response as string);
         } catch (error) {
@@ -120,7 +123,7 @@ export default function WritingPage() {
                     state === Step.PRACTICE && hasError &&
                     <div className="flex justify-center items-center h-full w-full">
                         <div className="w-full md:w-1/2">
-                            <Prompt prompt="An error occured, you might be submitting too frequently. Please try again later." />
+                            <PromptComponent prompt="An error occured, you might be submitting too frequently. Please try again later." />
                         </div>
                     </div>
                 }
@@ -128,7 +131,7 @@ export default function WritingPage() {
                     state === Step.PRACTICE && !hasError &&
                     <div className="flex flex-col md:flex-row gap-4 md:gap-6 h-full w-full">
                         <div className="w-full md:w-1/2">
-                            <Prompt prompt={prompt} />
+                            <PromptComponent prompt={prompt!.prompt} />
                         </div>
                         <div className="w-full md:w-1/2">
                             <Form proceedToReview={proceedToReview} />

@@ -20,6 +20,11 @@ export const LanguageNames = Object.fromEntries(
       key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()
     ])
 );
+export const LanguageCodes = {
+    'German': 'de',
+    'French': 'fr',
+    'English': 'en'
+}
 
 export const Levels = {
     A1: 'A1',
@@ -36,17 +41,18 @@ export const MODEL = process.env.MODEL || 'mistral-small-latest';
 
 // Database related types
 export interface Prompt {
-  language: string;
-  level: string;
+  id: string;
+  prompt: string;
+  language: Language;
+  level: Level;
   topic?: string;
-  prompt_text: string;
 }
 
+// TODO Convert to camelCase for consistency in the frontend
 export interface Response {
   id: string;
   prompt_id: string;
   response_text: string;
-  created_at: string;
   metadata?: any;
 }
 

@@ -2,7 +2,9 @@
     "Navigation": {
         "writing": "Writing",
         "reading": "Reading",
-        "comingSoon": "Coming Soon"
+        "comingSoon": "Coming Soon",
+        "login": "Login",
+        "account": "Account"
     },
     "Landing": {
         "heroTitle": "Master Writing in Any Language",
@@ -43,5 +45,38 @@
         "totalScore": "Total Score",
         "level": "Estimated Level",
         "language": "Analyzed Language"
+    },
+    "Auth": {
+        "loginTitle": "Log In",
+        "signupTitle": "Sign Up",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Retype Password",
+        "login": "Log In",
+        "signup": "Sign Up",
+        "loading": "Loading...",
+        "haveAccount": "Already have an account?",
+        "loginHere": "Log in here",
+        "noAccount": "Don't have an account?",
+        "signupHere": "Sign up here",
+        "passwordMismatch": "Passwords do not match",
+        "emailExists": "This email is already registered",
+        "invalidCredentials": "Invalid email or password",
+        "genericError": "An error occurred. Please try again.",
+        "passwordError": {
+            "minLength": "Password must be at least 8 characters",
+            "uppercase": "Password must contain at least one uppercase letter",
+            "lowercase": "Password must contain at least one lowercase letter",
+            "number": "Password must contain at least one number",
+            "special": "Password must contain at least one special character"
+        }
+    },
+    "Account": {
+        "loading": "Loading...",
+        "user": "User",
+        "underConstruction": "Under Construction",
+        "comingSoon": "Your account dashboard is coming soon. Here you'll be able to view your previous responses and track your progress.",
+        "signout": "Sign Out"
     }
 }

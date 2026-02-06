@@ -1,30 +1,31 @@
 'use server'
 import { cookies } from "next/headers";
-import { Language, Level } from '../types';
+import { Language, Level, Prompt } from '../types';
 import { promptSchema, readingSchema, reviewGeneration, checkRateLimit } from '@/lib';
 import logger from '@/lib/logger';
+import { useAuth } from "../context/AuthContext";
 
 export async function GET() {
     return new Response('API is running');
 }
 
-export async function POST(request: Request) {
-    const { success } = await checkRateLimit();
-    if (!success) {
-        return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {
-            status: 429,
-            headers: { 'Content-Type': 'application/json' }
-        });
-    }
+// export async function POST(request: Request) {
+//     const { success } = await checkRateLimit();
+//     if (!success) {
+//         return new Response(JSON.stringify({ error: 'Rate limit exceeded' }), {
+//             status: 429,
+//             headers: { 'Content-Type': 'application/json' }
+//         });
+//     }
 
-    const { language, level, prompt, input } = await request.json();
-    logger.debug('Received POST request with:', { language, level, prompt, input });
+//     const { language, level, prompt, input } = await request.json();
+//     logger.debug('Received POST request with:', { language, level });
 
-    const response = await reviewGeneration(language, level, prompt, input);
-    return new Response(JSON.stringify(response), {
-        headers: { 'Content-Type': 'application/json' }
-    });
-}
+//     const response = await reviewGeneration(userId || "anonymous", prompt, input);
+//     return new Response(JSON.stringify(response), {
+//         headers: { 'Content-Type': 'application/json' }
+//     });
+// }
 
 /**
  * Updates the language preference in cookies.
@@ -38,27 +39,25 @@ export async function languageChange( language: Language ) {
 
 /**
  * Review the given answer according to the given prompt, language, and CEFR level.
- * @param language
- * @param level
+ * @param userId
  * @param prompt
  * @param input
  * @returns A string that combines the Mistral API response, or error message if rate limited.
  */
-export async function reviewAnswer(language: Language, level: Level, prompt: string, input: string) {
+export async function reviewAnswer(userId: string, prompt: Prompt, input: string) {
     const { success } = await checkRateLimit();
     if (!success) {
         return 'Rate limit exceeded. Please wait a moment before trying again.';
     }
-
-    const response = await reviewGeneration(language, level, prompt, input);
+    // TODO handle when the user is anon. For now, we just pass "anonymous" to the reviewGeneration function, but we might want to do something different in the future (e.g. block anonymous users from using this feature, or use some kind of session ID instead of "anonymous" for better tracking).
+    const response = await reviewGeneration(userId || "anonymous", prompt, input);
     const reply = stringifyReview(response) || 'No response.'
     return reply;
 }
 
 /**
  * Turn the response JSON into a string to be passed to the client.
- * @param review 
- * @returns 
+ * @param review - The review object, which includes a pre-computed totalScore from reviewGeneration.
  */
 function stringifyReview (review: JSON) {
     let result = '';

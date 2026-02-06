@@ -57,7 +57,7 @@ export const TOPICS = [
  * @returns An object containing the prompt, language, and level.
  * TODO : Could simplify this?
  */
-export const promptSchema = async (language: Language, level: Level): Promise<PromptResult> => {
+export const promptSchema = async (language: Language, level: Level): Promise<Prompt> => {
     const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
     const languageName = LanguageNames[language];
     const prompt = await mistral.chat.complete({
@@ -106,19 +106,21 @@ export const promptSchema = async (language: Language, level: Level): Promise<Pr
         throw new Error(`Model returned invalid prompt schema: ${JSON.stringify(result.error.errors)}`);
     }
 
-    const promptData: Prompt = {
-        language: result.data.language,
-        level: result.data.level,
+    const promptResponse: Prompt = {
+        id: prompt.id, 
+        language: language,
+        level: level,
         topic: result.data.topic,
-        prompt_text: result.data.prompt,
+        prompt: result.data.prompt,
     };
 
-    const newPrompt = await promptToDatabase(promptData);
-    logger.debug('Saved prompt with ID:', newPrompt.rows[0].id);
+    const newPrompt = await promptToDatabase(promptResponse);
+    logger.debug('Saved prompt with ID:', newPrompt.oid);
 
-    result.data.id = newPrompt.rows[0].id;
+    result.data.id = newPrompt.oid;
+    promptResponse.id = newPrompt.rows[0].id;
 
-    return result.data;
+    return promptResponse;
 }
 
 /**

@@ -1,4 +1,4 @@
-import { Language, Level, Levels, MODEL } from "@/app/types";
+import { Language, LanguageCodes, LanguageNames, Level, Levels, MODEL, Prompt, Response } from "@/app/types";
 import mistral from "../mistral";
 import { baseline, frenchA1, frenchA2, frenchB1, frenchB2, germanB1 } from "./prompts";
 import {
@@ -10,6 +10,7 @@ import {
 } from './reviews';
 import logger from '@/lib/logger';
 import z from 'zod';
+import { responseToDatabase } from "../db";
 
 /**
  * Generate a review for the user's writing based on the given prompt and user input.
@@ -54,9 +55,30 @@ export type DefaultReview = z.infer<typeof defaultSchema>;
 
 export type ReviewResult = FrenchA1 | FrenchA2 | FrenchB1 | FrenchB2 | GermanB1 | DefaultReview;
 
-export const reviewGeneration = async (language: Language, level: Level, prompt: string, userInput: string): Promise<JSON> => {
-    logger.debug('Generating review for', language, level);
+/** Fields that are not scoring criteria and should be excluded from the total score sum. */
+const EXCLUDE_FROM_SUM = ['outOf', 'totalScore', 'language', 'level', 'name'];
+
+/** Calculates the total score achieved from a review by summing all numeric scoring fields. */
+export function calculateTotalScore(review: Record<string, unknown>): { achieved: number; outOf: number } {
+    let achieved = 0;
+    const outOf = typeof review.outOf === 'number' ? review.outOf : 100;
+
+    for (const [key, value] of Object.entries(review)) {
+        if (typeof value === 'number' && !EXCLUDE_FROM_SUM.includes(key)) {
+            achieved += value;
+        }
+    }
+
+    return { achieved, outOf };
+}
+
+export const reviewGeneration = async (userId: string, prompt: Prompt, userInput: string): Promise<JSON> => {
+    logger.debug('Generating review for', prompt.language, prompt.level);
     let response;
+    const promptText = prompt.prompt;
+    const language = prompt.language as Language;
+    const level = prompt.level as Level;
+    logger.debug('Parsed language and level from prompt:', { language, level });
     switch (language) {
         case (Language.FRENCH):
             switch (level) {
@@ -66,7 +88,7 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
                         messages: [
                             {
                                 role: 'system',
-                                content: frenchA1(prompt, userInput)
+                                content: frenchA1(promptText, userInput)
                             }
                         ],
                         responseFormat: {
@@ -86,7 +108,7 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
                         messages: [
                             {
                                 role: 'system',
-                                content: frenchA2(prompt, userInput)
+                                content: frenchA2(promptText, userInput)
                             }
                         ],
                         responseFormat: {
@@ -106,7 +128,7 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
                         messages: [
                             {
                                 role: 'system',
-                                content: frenchB1(prompt, userInput)
+                                content: frenchB1(promptText, userInput)
                             }
                         ],
                         responseFormat: {
@@ -126,7 +148,7 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
                         messages: [
                             {
                                 role: 'system',
-                                content: frenchB2(prompt, userInput)
+                                content: frenchB2(promptText, userInput)
                             }
                         ],
                         responseFormat: {
@@ -150,7 +172,7 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
                         messages: [
                             {
                                 role: 'system',
-                                content: germanB1(prompt, userInput)
+                                content: germanB1(promptText, userInput)
                             }
                         ],
                         responseFormat: {
@@ -172,7 +194,7 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
                 messages: [
                     {
                         role: 'system',
-                        content: baseline(prompt, userInput, language, level)
+                        content: baseline(promptText, userInput, language, level)
                     }
                 ],
                 responseFormat: {
@@ -199,7 +221,9 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
             });
             break;
     }
+
     const content = response!.choices?.[0]?.message?.content;
+    logger.debug('Raw model response content:', content);
     if (typeof content !== 'string') {
         throw new Error(`Unexpected model response format: ${JSON.stringify(content)}`);
     }
@@ -230,7 +254,19 @@ export const reviewGeneration = async (language: Language, level: Level, prompt:
     // }
 
     // return defaultParse.data as DefaultReview;
-    return parsed as JSON;
+
+    const review = parsed as Record<string, unknown>;
+    const { achieved, outOf } = calculateTotalScore(review);
+
+    const databaseResponse = await responseToDatabase(
+        userId,
+        prompt.id,
+        userInput,
+        achieved,
+        outOf === 0 ? 0 : Math.round((achieved / outOf * 100))
+    );
+
+    return review as unknown as JSON;
 }
 
 export default reviewGeneration;

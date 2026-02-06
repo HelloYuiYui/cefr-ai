@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useAuth } from '@/app/context/AuthContext';
 import '../styles.css';
 
 export default function Header() {
     const pathname = usePathname();
     const t = useTranslations('Navigation');
+    const { user, loading } = useAuth();
 
     const isActive = (path: string) => pathname === path;
 
@@ -31,6 +33,23 @@ export default function Header() {
                     >
                         {t('reading')}
                     </Link>
+                    {!loading && (
+                        user ? (
+                            <Link
+                                href="/account"
+                                className={`nav-link text-sm md:text-base bg-blue-100 text-white ${isActive('/account') ? 'active' : ''}`}
+                            >
+                                <b>{user.user_metadata?.username || t('account')}</b>
+                            </Link>
+                        ) : (
+                            <Link
+                                href="/login"
+                                className={`nav-link text-sm md:text-base bg-blue-100 text-white ${isActive('/login') || isActive('/signup') ? 'active' : ''}`}
+                            >
+                                {t('login')}
+                            </Link>
+                        )
+                    )}
                 </nav>
             </div>
         </header>
