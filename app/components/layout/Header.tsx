@@ -26,7 +26,7 @@ export default function Header() {
                         {t('writing')}
                     </Link>
                     <Link
-                        href="/reading"
+                        href="/"
                         className={`nav-link text-sm md:text-base ${isActive('/reading') ? 'active' : ''}`}
                     >
                         {t('reading')}

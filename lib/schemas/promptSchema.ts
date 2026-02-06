@@ -1,4 +1,4 @@
-import { Language, LanguageNames, Level, MODEL, Prompt } from "@/app/types";
+import { Language, LanguageNames, Level, MODEL, Prompt, Reading } from "@/app/types";
 import mistral from "../mistral";
 import z from 'zod';
 import { writingPrompt } from "./prompts";
@@ -203,17 +203,18 @@ export const readingSchema = async (language: Language, level: Level): Promise<R
         throw new Error(`Model returned invalid reading schema: ${JSON.stringify(result.error.errors)}`);
     }
 
-    const readingData: Prompt = {
+    const readingData: Reading = {
         language: LanguageNames[result.data.language],
         level: result.data.level,
         topic: result.data.topic,
-        prompt_text: result.data.text,
+        text: result.data.text,
+        questions: result.data.questions,
     };
 
-    const newPrompt = await readingTextToDatabase(readingData);
-    logger.debug('Saved reading prompt with ID:', newPrompt.rows[0].id);
+    const newReading = await readingTextToDatabase(readingData);
+    logger.debug('Saved reading text with ID:', newReading.rows[0].id);
 
-    result.data.id = newPrompt.rows[0].id;
+    result.data.id = newReading.rows[0].id;
 
     return result.data;
 }
