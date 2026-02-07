@@ -56,7 +56,7 @@ export default function WritingPage() {
         try {
             setUserInput(userInput);
             logger.debug(user);
-            const response = await reviewAnswer(user?.id || "anonymous", prompt!, userInput); // TODO: Handle case where prompt is undefined, though it shouldn't be if flow is followed correctly.
+            const response = await reviewAnswer(user?.id || null, prompt!, userInput); // TODO: Handle case where prompt is undefined, though it shouldn't be if flow is followed correctly.
             logger.debug('Received analysis:', response);
             setResult(response as string);
         } catch (error) {

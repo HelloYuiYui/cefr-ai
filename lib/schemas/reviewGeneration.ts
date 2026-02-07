@@ -72,7 +72,7 @@ export function calculateTotalScore(review: Record<string, unknown>): { achieved
     return { achieved, outOf };
 }
 
-export const reviewGeneration = async (userId: string, prompt: Prompt, userInput: string): Promise<JSON> => {
+export const reviewGeneration = async (userId: string | null, prompt: Prompt, userInput: string): Promise<JSON> => {
     logger.debug('Generating review for', prompt.language, prompt.level);
     let response;
     const promptText = prompt.prompt;
@@ -258,7 +258,7 @@ export const reviewGeneration = async (userId: string, prompt: Prompt, userInput
     const review = parsed as Record<string, unknown>;
     const { achieved, outOf } = calculateTotalScore(review);
 
-    const databaseResponse = await responseToDatabase(
+    userId && await responseToDatabase(
         userId,
         prompt.id,
         userInput,

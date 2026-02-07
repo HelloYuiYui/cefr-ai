@@ -44,13 +44,13 @@ export async function languageChange( language: Language ) {
  * @param input
  * @returns A string that combines the Mistral API response, or error message if rate limited.
  */
-export async function reviewAnswer(userId: string, prompt: Prompt, input: string) {
+export async function reviewAnswer(userId: string | null, prompt: Prompt, input: string) {
     const { success } = await checkRateLimit();
     if (!success) {
         return 'Rate limit exceeded. Please wait a moment before trying again.';
     }
     // TODO handle when the user is anon. For now, we just pass "anonymous" to the reviewGeneration function, but we might want to do something different in the future (e.g. block anonymous users from using this feature, or use some kind of session ID instead of "anonymous" for better tracking).
-    const response = await reviewGeneration(userId || "anonymous", prompt, input);
+    const response = await reviewGeneration(userId, prompt, input);
     const reply = stringifyReview(response) || 'No response.'
     return reply;
 }
