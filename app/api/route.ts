@@ -59,7 +59,7 @@ export async function reviewAnswer(userId: string | null, prompt: Prompt, input:
  * Turn the response JSON into a string to be passed to the client.
  * @param review - The review object, which includes a pre-computed totalScore from reviewGeneration.
  */
-function stringifyReview (review: JSON) {
+export function stringifyReview (review: JSON) {
     let result = '';
     let achieved = 0;
     let outOf = 0;
