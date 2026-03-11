@@ -11,6 +11,7 @@ import {
 import logger from '@/lib/logger';
 import z from 'zod';
 import { responseToDatabase } from "../db";
+import { log } from "console";
 
 /**
  * Generate a review for the user's writing based on the given prompt and user input.

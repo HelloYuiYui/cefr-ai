@@ -59,7 +59,7 @@ export async function reviewAnswer(userId: string | null, prompt: Prompt, input:
  * Turn the response JSON into a string to be passed to the client.
  * @param review - The review object, which includes a pre-computed totalScore from reviewGeneration.
  */
-export function stringifyReview (review: JSON) {
+export async function stringifyReview (review: JSON) {
     let result = '';
     let achieved = 0;
     let outOf = 0;
@@ -97,7 +97,7 @@ export function stringifyReview (review: JSON) {
  * @param level
  * @returns An object containing the prompt, language, and level, or null if rate limited.
  */
-export async function getPrompt(language: Language, level: Level) {
+export async function getWritingPrompt(language: Language, level: Level) {
     const { success } = await checkRateLimit();
     if (!success) {
         logger.warn('Rate limit exceeded for getPrompt');
@@ -113,7 +113,7 @@ export async function getPrompt(language: Language, level: Level) {
  * @param level
  * @returns An object containing the reading text, questions, language, and level, or null if rate limited.
  */
-export async function getReading(language: Language, level: Level) {
+export async function getReadingPrompt(language: Language, level: Level) {
     const { success } = await checkRateLimit();
     if (!success) {
         logger.warn('Rate limit exceeded for getReading');

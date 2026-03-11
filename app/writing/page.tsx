@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { Form, Starter } from "../components";
 import Selection from "../components/Selection";
 import { Step, Language, Level, Levels, Prompt } from "../types";
-import { getPrompt, languageChange, reviewAnswer } from "../api/route";
+import { getWritingPrompt, languageChange, reviewAnswer } from "../api/route";
 import Review from "../components/Review";
 import logger from "@/lib/logger";
 import PromptComponent from "../components/Prompt";
@@ -31,7 +31,7 @@ export default function WritingPage() {
         setHasError(false);
         try {
             logger.debug('Fetching prompt for', lang, lvl);
-            const response = await getPrompt(lang, lvl);
+            const response = await getWritingPrompt(lang, lvl);
             if ('error' in response) {
                 logger.warn('Rate limit or error:', response.error);
                 setHasError(true);

@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { Starter } from "../components";
 import { Language, Level, Levels, Reading, UserAnswer } from "../types";
-import { getReading, languageChange } from "../api/route";
+import { getReadingPrompt, languageChange } from "../api/route";
 import logger from "@/lib/logger";
 
 const validLanguages = [Language.GERMAN, Language.FRENCH, Language.ENGLISH];
@@ -26,7 +26,7 @@ export default function ReadingPage() {
         setHasError(false);
         try {
             logger.debug('Fetching reading text for', lang, lvl);
-            const response = await getReading(lang, lvl);
+            const response = await getReadingPrompt(lang, lvl);
             if ('error' in response) {
                 logger.warn('Rate limit or error:', response.error);
                 setHasError(true);

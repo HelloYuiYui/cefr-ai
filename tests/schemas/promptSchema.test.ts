@@ -245,7 +245,7 @@ describe('promptSchema()', () => {
         expect(mistral.chat.complete).toHaveBeenCalledOnce();
         const callArgs = vi.mocked(mistral.chat.complete).mock.calls[0][0];
         expect(callArgs.messages[0].role).toBe('system');
-        expect(callArgs.responseFormat.type).toBe('json_schema');
+        expect(callArgs.responseFormat!.type).toBe('json_schema');
     });
 
     it('parses valid JSON response and returns Prompt object', async () => {

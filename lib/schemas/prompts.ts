@@ -375,6 +375,40 @@ FORMAT DE RÉPONSE OBLIGATOIRE :
 - Commentaire global (court, clair, encourageant)
 `;
 
+export const germanB1Shorter = (prompt: string, userInput: string) => `
+Du bewertest einen deutschen B1-Text nach Goethe-Kriterien. Bewerte sachlich und streng.
+
+**Bewertungskriterien:**
+
+**1. Erfüllung**
+10: Alle Sprachfunktionen vollständig, Textsorte korrekt, situations- und partneradäquat
+7.5: 2 Funktionen angemessen ODER 1 angemessen + 2 teilweise
+5: 1 angemessen + 1 teilweise ODER alle teilweise
+2.5: Nur 1 Funktion teilweise
+0: <50% Wortanzahl ODER Thema verfehlt
+
+**2. Kohärenz**
+10: Aufbau und Verknüpfung durchgängig klar
+7.5: Überwiegend klar
+5: Teilweise klar
+2.5: Kaum erkennbar
+0: Inkohärent
+
+**3. Wortschatz**
+Spektrum: 10=differenziert | 7.5=angemessen | 5=begrenzt | 2.5=kaum | 0=unzureichend
+Beherrschung: 10=vereinzelte Fehler | 7.5=mehrere ohne Beeinträchtigung | 5=teilweise beeinträchtigt | 2.5=erheblich beeinträchtigt | 0=Verständigung unmöglich
+
+**4. Strukturen (Morphologie/Syntax/Orthografie)**
+Spektrum: 10=differenziert | 7.5=angemessen | 5=begrenzt | 2.5=kaum | 0=unzureichend
+Beherrschung: Wie Wortschatz
+
+**Ausgabe:**
+Prüfkommentar mit Stärken und Schwächen (kein korrigierter Text).
+
+**Aufgabe:** ${prompt}
+**Text:** ${userInput}
+`;
+
 export const germanB1 = (prompt: string, userInput: string) => `
 Du bist eine erfahrene Prüferin / ein erfahrener Prüfer für Deutsch als Fremdsprache und bewertest eine schriftliche Leistung auf dem **GER-Niveau B1**.
 

@@ -24,7 +24,7 @@ vi.mock('@/app/context/AuthContext', () => ({
     useAuth: vi.fn()
 }));
 
-import { GET, getPrompt, getReading, reviewAnswer, languageChange } from '@/app/api/route';
+import { GET, getWritingPrompt, getReadingPrompt, reviewAnswer, languageChange } from '@/app/api/route';
 import { checkRateLimit, promptSchema, readingSchema, reviewGeneration } from '@/lib';
 
 describe('GET()', () => {
@@ -50,7 +50,7 @@ describe('getPrompt()', () => {
     it('returns error object when rate limited', async () => {
         vi.mocked(checkRateLimit).mockResolvedValue({ success: false });
 
-        const result = await getPrompt('fr', 'A1');
+        const result = await getWritingPrompt('fr', 'A1');
         expect(result).toEqual({
             error: 'Rate limit exceeded. Please wait a moment before trying again.'
         });
@@ -66,7 +66,7 @@ describe('getPrompt()', () => {
             topic: 'Education'
         });
 
-        await getPrompt('fr', 'A1');
+        await getWritingPrompt('fr', 'A1');
         expect(promptSchema).toHaveBeenCalledWith('fr', 'A1');
     });
 
@@ -81,14 +81,14 @@ describe('getPrompt()', () => {
         vi.mocked(checkRateLimit).mockResolvedValue({ success: true });
         vi.mocked(promptSchema).mockResolvedValue(mockPrompt);
 
-        const result = await getPrompt('fr', 'A1');
+        const result = await getWritingPrompt('fr', 'A1');
         expect(result).toEqual(mockPrompt);
     });
 
     it('does not call promptSchema when rate limited', async () => {
         vi.mocked(checkRateLimit).mockResolvedValue({ success: false });
 
-        await getPrompt('de', 'B1');
+        await getWritingPrompt('de', 'B1');
         expect(promptSchema).not.toHaveBeenCalled();
     });
 });
@@ -101,7 +101,7 @@ describe('getReading()', () => {
     it('returns error object when rate limited', async () => {
         vi.mocked(checkRateLimit).mockResolvedValue({ success: false });
 
-        const result = await getReading('de', 'B1');
+        const result = await getReadingPrompt('de', 'B1');
         expect(result).toEqual({
             error: 'Rate limit exceeded. Please wait a moment before trying again.'
         });
@@ -117,7 +117,7 @@ describe('getReading()', () => {
             questions: []
         } as any);
 
-        await getReading('de', 'B1');
+        await getReadingPrompt('de', 'B1');
         expect(readingSchema).toHaveBeenCalledWith('de', 'B1');
     });
 
@@ -138,7 +138,7 @@ describe('getReading()', () => {
         vi.mocked(checkRateLimit).mockResolvedValue({ success: true });
         vi.mocked(readingSchema).mockResolvedValue(mockReading as any);
 
-        const result = await getReading('de', 'B1');
+        const result = await getReadingPrompt('de', 'B1');
         expect(result).toEqual(mockReading);
     });
 });
