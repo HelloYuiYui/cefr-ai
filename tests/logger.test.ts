@@ -6,7 +6,7 @@ describe('logger (DEBUG=true)', () => {
     beforeEach(async () => {
         vi.resetModules();
         process.env.DEBUG = 'true';
-        process.env.NODE_ENV = 'test';
+        vi.stubEnv('NODE_ENV', 'test');
         vi.spyOn(console, 'debug').mockImplementation(() => {});
         vi.spyOn(console, 'info').mockImplementation(() => {});
         vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -17,6 +17,7 @@ describe('logger (DEBUG=true)', () => {
 
     afterEach(() => {
         vi.restoreAllMocks();
+        vi.unstubAllEnvs();
     });
 
     it('debug() calls console.debug with [debug] prefix', () => {
@@ -51,7 +52,7 @@ describe('logger (DEBUG=false, production)', () => {
     beforeEach(async () => {
         vi.resetModules();
         process.env.DEBUG = 'false';
-        process.env.NODE_ENV = 'production';
+        vi.stubEnv('NODE_ENV', 'production');
         vi.spyOn(console, 'debug').mockImplementation(() => {});
         vi.spyOn(console, 'info').mockImplementation(() => {});
         vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -62,6 +63,7 @@ describe('logger (DEBUG=false, production)', () => {
 
     afterEach(() => {
         vi.restoreAllMocks();
+        vi.unstubAllEnvs();
     });
 
     it('debug() does NOT call console.debug', () => {
