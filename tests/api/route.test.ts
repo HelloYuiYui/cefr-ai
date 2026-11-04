@@ -24,8 +24,18 @@ vi.mock('@/app/context/AuthContext', () => ({
     useAuth: vi.fn()
 }));
 
+vi.mock('@/lib/db', () => ({
+    getPromptById: vi.fn()
+}));
+
+vi.mock('@/lib/supabase/server', () => ({
+    getUserIdFromAccessToken: vi.fn()
+}));
+
 import { GET, getWritingPrompt, getReadingPrompt, reviewAnswer, languageChange } from '@/app/api/route';
 import { checkRateLimit, promptSchema, readingSchema, reviewGeneration } from '@/lib';
+import { getPromptById } from '@/lib/db';
+import { getUserIdFromAccessToken } from '@/lib/supabase/server';
 
 describe('GET()', () => {
     it('returns a response with "API is running"', async () => {
@@ -146,9 +156,17 @@ describe('getReading()', () => {
 describe('reviewAnswer()', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.mocked(checkRateLimit).mockResolvedValue({ success: true });
+        vi.mocked(getPromptById).mockResolvedValue(storedPrompt);
+        vi.mocked(getUserIdFromAccessToken).mockResolvedValue(null);
+        vi.mocked(reviewGeneration).mockResolvedValue({
+            grammarFeedback: 'Good grammar',
+            score: 10,
+            outOf: 15
+        } as any);
     });
 
-    const mockPrompt = {
+    const storedPrompt = {
         id: 'prompt-1',
         prompt: 'Write something.',
         language: 'fr' as const,
@@ -159,46 +177,71 @@ describe('reviewAnswer()', () => {
     it('returns rate limit message when rate limited', async () => {
         vi.mocked(checkRateLimit).mockResolvedValue({ success: false });
 
-        const result = await reviewAnswer('user-1', mockPrompt, 'My text');
+        const result = await reviewAnswer('token', 'prompt-1', 'My text');
         expect(result).toBe('Rate limit exceeded. Please wait a moment before trying again.');
+        expect(reviewGeneration).not.toHaveBeenCalled();
     });
 
-    it('calls reviewGeneration with correct arguments', async () => {
-        vi.mocked(checkRateLimit).mockResolvedValue({ success: true });
-        vi.mocked(reviewGeneration).mockResolvedValue({
-            grammarFeedback: 'Good',
-            outOf: 15,
-            score: 10
-        } as any);
+    it('rejects arguments of the wrong type', async () => {
+        const invalidCalls: unknown[][] = [
+            ['token', { id: 'prompt-1', prompt: 'Injected' }, 'Text'],
+            ['token', '', 'Text'],
+            ['token', 'prompt-1', 42],
+            [{ id: 'user-2' }, 'prompt-1', 'Text'],
+        ];
+        for (const args of invalidCalls) {
+            const result = await (reviewAnswer as (...a: unknown[]) => Promise<string>)(...args);
+            expect(result).toBe('Invalid request.');
+        }
+        expect(getPromptById).not.toHaveBeenCalled();
+        expect(reviewGeneration).not.toHaveBeenCalled();
+    });
 
-        await reviewAnswer('user-1', mockPrompt, 'My input text');
+    it('loads the prompt from the database by id', async () => {
+        await reviewAnswer(null, 'prompt-1', 'My input text');
 
-        expect(reviewGeneration).toHaveBeenCalledWith('user-1', mockPrompt, 'My input text');
+        expect(getPromptById).toHaveBeenCalledWith('prompt-1');
+        expect(reviewGeneration).toHaveBeenCalledWith(null, storedPrompt, 'My input text');
+    });
+
+    it('returns an error and skips review when the prompt does not exist', async () => {
+        vi.mocked(getPromptById).mockResolvedValue(null);
+
+        const result = await reviewAnswer(null, 'missing', 'Text');
+        expect(result).toBe('Prompt not found.');
+        expect(reviewGeneration).not.toHaveBeenCalled();
+    });
+
+    it('returns an error when the prompt lookup fails', async () => {
+        vi.mocked(getPromptById).mockRejectedValue(new Error('invalid input syntax for type uuid'));
+
+        const result = await reviewAnswer(null, 'not-a-uuid', 'Text');
+        expect(result).toBe('Prompt not found.');
+        expect(reviewGeneration).not.toHaveBeenCalled();
+    });
+
+    it('uses the user id verified from the access token', async () => {
+        vi.mocked(getUserIdFromAccessToken).mockResolvedValue('verified-user');
+
+        await reviewAnswer('valid-token', 'prompt-1', 'Text');
+
+        expect(getUserIdFromAccessToken).toHaveBeenCalledWith('valid-token');
+        expect(reviewGeneration).toHaveBeenCalledWith('verified-user', storedPrompt, 'Text');
+    });
+
+    it('treats anonymous and invalid tokens as no user', async () => {
+        await reviewAnswer(null, 'prompt-1', 'Text');
+        await reviewAnswer('forged-token', 'prompt-1', 'Text');
+
+        expect(reviewGeneration).toHaveBeenNthCalledWith(1, null, storedPrompt, 'Text');
+        expect(reviewGeneration).toHaveBeenNthCalledWith(2, null, storedPrompt, 'Text');
     });
 
     it('returns formatted string from stringifyReview', async () => {
-        vi.mocked(checkRateLimit).mockResolvedValue({ success: true });
-        vi.mocked(reviewGeneration).mockResolvedValue({
-            grammarFeedback: 'Good grammar',
-            score: 10,
-            outOf: 15
-        } as any);
-
-        const result = await reviewAnswer('user-1', mockPrompt, 'Text');
+        const result = await reviewAnswer(null, 'prompt-1', 'Text');
 
         expect(typeof result).toBe('string');
         expect(result).toContain('grammarFeedback');
         expect(result).toContain('totalScore:');
-    });
-
-    it('passes userId to reviewGeneration (null for anonymous)', async () => {
-        vi.mocked(checkRateLimit).mockResolvedValue({ success: true });
-        vi.mocked(reviewGeneration).mockResolvedValue({
-            grammarFeedback: 'Good',
-            outOf: 100
-        } as any);
-
-        await reviewAnswer(null, mockPrompt, 'Text');
-        expect(reviewGeneration).toHaveBeenCalledWith(null, mockPrompt, 'Text');
     });
 });

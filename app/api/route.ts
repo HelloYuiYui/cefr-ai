@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { Language, Level, Prompt } from '../types';
 import { promptSchema, readingSchema, reviewGeneration, checkRateLimit } from '@/lib';
 import logger from '@/lib/logger';
+import { getPromptById } from '@/lib/db';
+import { getUserIdFromAccessToken } from '@/lib/supabase/server';
 import { useAuth } from "../context/AuthContext";
 
 export async function GET() {
@@ -38,18 +40,40 @@ export async function languageChange( language: Language ) {
 }
 
 /**
- * Review the given answer according to the given prompt, language, and CEFR level.
- * @param userId
- * @param prompt
- * @param input
- * @returns A string that combines the Mistral API response, or error message if rate limited.
+ * Review the user's answer to a stored writing prompt.
+ * The user and the prompt are resolved on the server, so a client cannot
+ * submit on behalf of another user or supply its own prompt text.
+ * @param accessToken - Supabase access token of the signed-in user, or null for anonymous users
+ * @param promptId - ID of the prompt returned by getWritingPrompt
+ * @param input - The user's written answer
+ * @returns A string that combines the Mistral API response, or an error message.
  */
-export async function reviewAnswer(userId: string | null, prompt: Prompt, input: string) {
+export async function reviewAnswer(accessToken: string | null, promptId: string, input: string) {
     const { success } = await checkRateLimit();
     if (!success) {
         return 'Rate limit exceeded. Please wait a moment before trying again.';
     }
-    // TODO handle when the user is anon. For now, we just pass "anonymous" to the reviewGeneration function, but we might want to do something different in the future (e.g. block anonymous users from using this feature, or use some kind of session ID instead of "anonymous" for better tracking).
+
+    if (
+        (accessToken !== null && typeof accessToken !== 'string') ||
+        typeof promptId !== 'string' || promptId.length === 0 ||
+        typeof input !== 'string'
+    ) {
+        return 'Invalid request.';
+    }
+
+    let prompt: Prompt | null;
+    try {
+        prompt = await getPromptById(promptId);
+    } catch (error) {
+        logger.warn('Failed to load prompt:', error);
+        prompt = null;
+    }
+    if (!prompt) {
+        return 'Prompt not found.';
+    }
+
+    const userId = await getUserIdFromAccessToken(accessToken);
     const response = await reviewGeneration(userId, prompt, input);
     const reply = stringifyReview(response) || 'No response.'
     return reply;

@@ -21,6 +21,28 @@ export const promptToDatabase = (prompt: Prompt) => {
 };
 
 /**
+ * Loads a stored writing prompt by id.
+ * @param id - ID of the prompt
+ * @returns The prompt, or null if it does not exist
+ */
+export const getPromptById = async (id: string): Promise<Prompt | null> => {
+    const result = await pool.query(
+        `SELECT id, language, level, topic, prompt_text FROM prompts WHERE id = $1`,
+        [id]
+    );
+    const row = result.rows[0];
+    if (!row) return null;
+
+    return {
+        id: String(row.id),
+        prompt: row.prompt_text,
+        language: row.language,
+        level: row.level,
+        topic: row.topic ?? undefined,
+    };
+};
+
+/**
  * Saves a user response to the database. TODO check if user_id connection works authomatically on supabase. 
  * @param promptId - UUID of the associated prompt
  * @param responseText - The user's response text
