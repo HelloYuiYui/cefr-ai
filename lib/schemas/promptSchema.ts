@@ -103,7 +103,7 @@ export const promptSchema = async (language: Language, level: Level): Promise<Pr
 
     const result = promptResultSchema.safeParse(parsed);
     if (!result.success) {
-        throw new Error(`Model returned invalid prompt schema: ${JSON.stringify(result.error.errors)}`);
+        throw new Error(`Model returned invalid prompt schema: ${JSON.stringify(result.error.issues)}`);
     }
 
     const promptResponse: Prompt = {
@@ -202,7 +202,7 @@ export const readingSchema = async (language: Language, level: Level): Promise<R
 
     const result = readingResultSchema.safeParse(parsed);
     if (!result.success) {
-        throw new Error(`Model returned invalid reading schema: ${JSON.stringify(result.error.errors)}`);
+        throw new Error(`Model returned invalid reading schema: ${JSON.stringify(result.error.issues)}`);
     }
 
     const readingData: Reading = {
