@@ -1,6 +1,6 @@
-import { Language, LanguageCodes, LanguageNames, Level, Levels, MODEL, Prompt, Response } from "@/app/types";
+import { Language, Level, Levels, MODEL, Prompt } from "@/app/types";
 import mistral from "../mistral";
-import { baseline, frenchA1, frenchA2, frenchB1, frenchB2, germanB1 } from "./prompts";
+import { baseline, frenchA1, frenchA2, frenchB1, frenchB2, germanB1, reviewSubmission } from "./prompts";
 import {
     frenchA1Schema, frenchA1SchemaJson,
     frenchA2Schema, frenchA2SchemaJson,
@@ -11,7 +11,6 @@ import {
 import logger from '@/lib/logger';
 import z from 'zod';
 import { responseToDatabase } from "../db";
-import { log } from "console";
 
 /**
  * Generate a review for the user's writing based on the given prompt and user input.
@@ -48,7 +47,7 @@ const defaultSchemaJson = {
         language: { type: 'string' },
         level: { type: 'string', description: 'Estimated CEFR level of the user based on their written production. Only use [A1, A2, B1, B2, C1, C2]' }
     },
-    required: ['grammarFeedback', 'vocabularyFeedback', 'textFluencyFeedback', 'language', 'level'],
+    required: ['grammarFeedback', 'vocabularyFeedback', 'textFluencyFeedback', 'totalScore', 'language', 'level'],
     additionalProperties: false
 };
 
@@ -73,157 +72,90 @@ export function calculateTotalScore(review: Record<string, unknown>): { achieved
     return { achieved, outOf };
 }
 
-export const reviewGeneration = async (userId: string | null, prompt: Prompt, userInput: string): Promise<JSON> => {
-    logger.debug('Generating review for', prompt.language, prompt.level);
-    let response;
-    const promptText = prompt.prompt;
-    const language = prompt.language as Language;
-    const level = prompt.level as Level;
-    logger.debug('Parsed language and level from prompt:', { language, level });
-    switch (language) {
-        case (Language.FRENCH):
-            switch (level) {
-                case Levels.A1:
-                    response = await mistral.chat.complete({
-                        model: MODEL,
-                        messages: [
-                            {
-                                role: 'system',
-                                content: frenchA1(promptText, userInput)
-                            }
-                        ],
-                        responseFormat: {
-                            type: 'json_schema',
-                            jsonSchema: {
-                                name: 'frenchA1',
-                                description: 'Feedback for A1 level French learner.',
-                                schemaDefinition: frenchA1SchemaJson
-                            }
-                        }
-                    });
-                    logger.debug('Generated review for French A1 level:', response.choices[0].message);
-                    break;
-                case Levels.A2:
-                    response = await mistral.chat.complete({
-                        model: MODEL,
-                        messages: [
-                            {
-                                role: 'system',
-                                content: frenchA2(promptText, userInput)
-                            }
-                        ],
-                        responseFormat: {
-                            type: 'json_schema',
-                            jsonSchema: {
-                                name: 'frenchA2',
-                                description: 'Feedback for A2 level French learner.',
-                                schemaDefinition: frenchA2SchemaJson
-                            }
-                        }
-                    });
-                    logger.debug('Generated review for French A2 level:', response.choices[0].message);
-                    break;
-                case Levels.B1:
-                    response = await mistral.chat.complete({
-                        model: MODEL,
-                        messages: [
-                            {
-                                role: 'system',
-                                content: frenchB1(promptText, userInput)
-                            }
-                        ],
-                        responseFormat: {
-                            type: 'json_schema',
-                            jsonSchema: {
-                                name: 'frenchB1',
-                                description: 'Feedback for B1 level French learner.',
-                                schemaDefinition: frenchB1SchemaJson
-                            }
-                        }
-                    });
-                    logger.debug('Generated review for French B1 level:', response.choices[0].message);
-                    break;
-                case Levels.B2:
-                    response = await mistral.chat.complete({
-                        model: MODEL,
-                        messages: [
-                            {
-                                role: 'system',
-                                content: frenchB2(promptText, userInput)
-                            }
-                        ],
-                        responseFormat: {
-                            type: 'json_schema',
-                            jsonSchema: {
-                                name: 'frenchB2',
-                                description: 'Feedback for B2 level French learner.',
-                                schemaDefinition: frenchB2SchemaJson
-                            }
-                        }
-                    });
-                    logger.debug('Generated review for French B2 level:', response.choices[0].message);
-                    break;
-            }
-            if (level === Levels.A1 || level === Levels.A2 || level === Levels.B1 || level === Levels.B2) break;
-        case (Language.GERMAN):
-            switch (level) {
-                case Levels.B1:
-                    response = await mistral.chat.complete({
-                        model: MODEL,
-                        messages: [
-                            {
-                                role: 'system',
-                                content: germanB1(promptText, userInput)
-                            }
-                        ],
-                        responseFormat: {
-                            type: 'json_schema',
-                            jsonSchema: {
-                                name: 'germanB1',
-                                description: 'Feedback for a B1 level German learner.',
-                                schemaDefinition: germanB1SchemaJson
-                            }
-                        }
-                    });
-                    logger.debug('Generated review for German B1 level:', response.choices[0].message);
-                    break;
-            }
-            if (level === Levels.B1) break;
-        default:
-            response = await mistral.chat.complete({
-                model: MODEL,
-                messages: [
-                    {
-                        role: 'system',
-                        content: baseline(promptText, userInput, language, level)
-                    }
-                ],
-                responseFormat: {
-                    type: 'json_schema',
-                    jsonSchema: {
-                        name: 'default',
-                        description: 'Feedback for an unschematised language or level learner.',
-                        schemaDefinition: {
-                            type: 'object',
-                            properties: {
-                                grammarFeedback: { type: 'string', description: 'Feedback on grammatical accuracy and range.' },
-                                vocabularyFeedback: { type: 'string', description: 'Feedback on vocabulary use and appropriateness.' },
-                                textFluencyFeedback: { type: 'string', description: 'Feedback on the fluency and coherence of the text.' },
-                                totalScore: { type: 'number', minSize: 0, maxSize: 100, step: 1 },
-                                outOf: { type: 'number', default: 100 },
-                                language: { type: 'string' },
-                                level: { type: 'string', description: 'Estimated CEFR level of the user based on their written production. Only use [A1, A2, B1, B2, C1, C2]' }
-                            },
-                            required: ['grammarFeedback', 'vocabularyFeedback', 'textFluencyFeedback', 'totalScore', 'language', 'level'],
-                            additionalProperties: false
-                        }
-                    }
-                }
-            });
-            break;
+type JsonSchemaProperty = { type?: string; default?: unknown; minimum?: number; maximum?: number; minSize?: number; maxSize?: number };
+type JsonObjectSchema = { properties?: Record<string, JsonSchemaProperty> };
+
+interface Rubric {
+    name: string;
+    description: string;
+    systemPrompt: string;
+    schemaDefinition: JsonObjectSchema;
+}
+
+function selectRubric(language: Language, level: Level): Rubric {
+    if (language === Language.FRENCH) {
+        switch (level) {
+            case Levels.A1:
+                return { name: 'frenchA1', description: 'Feedback for A1 level French learner.', systemPrompt: frenchA1(), schemaDefinition: frenchA1SchemaJson };
+            case Levels.A2:
+                return { name: 'frenchA2', description: 'Feedback for A2 level French learner.', systemPrompt: frenchA2(), schemaDefinition: frenchA2SchemaJson };
+            case Levels.B1:
+                return { name: 'frenchB1', description: 'Feedback for B1 level French learner.', systemPrompt: frenchB1(), schemaDefinition: frenchB1SchemaJson };
+            case Levels.B2:
+                return { name: 'frenchB2', description: 'Feedback for B2 level French learner.', systemPrompt: frenchB2(), schemaDefinition: frenchB2SchemaJson };
+        }
+    }
+    if (language === Language.GERMAN && level === Levels.B1) {
+        return { name: 'germanB1', description: 'Feedback for a B1 level German learner.', systemPrompt: germanB1(), schemaDefinition: germanB1SchemaJson };
+    }
+    return { name: 'default', description: 'Feedback for an unschematised language or level learner.', systemPrompt: baseline(language, level), schemaDefinition: defaultSchemaJson };
+}
+
+/**
+ * Keeps model-reported scores within the rubric so a manipulated answer cannot inflate them:
+ * clamps each numeric criterion to its range, drops numeric fields the rubric does not define,
+ * and replaces outOf with the rubric's own maximum.
+ */
+export function enforceRubricLimits(review: Record<string, unknown>, schema: JsonObjectSchema): Record<string, unknown> {
+    const properties = schema.properties;
+    if (!properties) return review;
+
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(review)) {
+        const property = properties[key];
+        if (typeof value !== 'number') {
+            result[key] = value;
+            continue;
+        }
+        if (!property || property.type !== 'number') continue;
+
+        const min = property.minimum ?? property.minSize;
+        const max = property.maximum ?? property.maxSize;
+        let clamped = value;
+        if (typeof min === 'number') clamped = Math.max(min, clamped);
+        if (typeof max === 'number') clamped = Math.min(max, clamped);
+        result[key] = clamped;
     }
 
-    const content = response!.choices?.[0]?.message?.content;
+    if (typeof properties.outOf?.default === 'number') {
+        result.outOf = properties.outOf.default;
+    }
+    return result;
+}
+
+export const reviewGeneration = async (userId: string | null, prompt: Prompt, userInput: string): Promise<JSON> => {
+    const language = prompt.language as Language;
+    const level = prompt.level as Level;
+    const rubric = selectRubric(language, level);
+    logger.debug('Generating review with rubric', rubric.name);
+
+    const response = await mistral.chat.complete({
+        model: MODEL,
+        messages: [
+            { role: 'system', content: rubric.systemPrompt },
+            { role: 'user', content: reviewSubmission(prompt.prompt, userInput) }
+        ],
+        responseFormat: {
+            type: 'json_schema',
+            jsonSchema: {
+                name: rubric.name,
+                description: rubric.description,
+                schemaDefinition: rubric.schemaDefinition
+            }
+        }
+    });
+
+    const content = response.choices?.[0]?.message?.content;
     logger.debug('Raw model response content:', content);
     if (typeof content !== 'string') {
         throw new Error(`Unexpected model response format: ${JSON.stringify(content)}`);
@@ -236,36 +168,18 @@ export const reviewGeneration = async (userId: string | null, prompt: Prompt, us
         throw new Error(`Failed to parse model JSON response: ${String(err)}`);
     }
 
-    // Choose schema based on language/level
-    // const isFrenchA1 = language === Language.FRENCH && level === Levels.A1;
-
-    // if (isFrenchA1) {
-    //     const result = frenchA1Schema.safeParse(parsed);
-    //     if (!result.success) {
-    //         logger.error('French A1 schema validation failed', result.error.format());
-    //         throw new Error(`Model returned invalid French A1 schema: ${JSON.stringify(result.error.errors)}`);
-    //     }
-    //     return result.toJSON();
-    // }
-
-    // const defaultParse = defaultSchema.safeParse(parsed);
-    // if (!defaultParse.success) {
-    //     logger.error('Default schema validation failed', defaultParse.error.format());
-    //     throw new Error(`Model returned invalid default review schema: ${JSON.stringify(defaultParse.error.errors)}`);
-    // }
-
-    // return defaultParse.data as DefaultReview;
-
-    const review = parsed as Record<string, unknown>;
+    const review = enforceRubricLimits(parsed as Record<string, unknown>, rubric.schemaDefinition);
     const { achieved, outOf } = calculateTotalScore(review);
 
-    userId && await responseToDatabase(
-        userId,
-        prompt.id,
-        userInput,
-        achieved,
-        outOf === 0 ? 0 : Math.round((achieved / outOf * 100))
-    );
+    if (userId) {
+        await responseToDatabase(
+            userId,
+            prompt.id,
+            userInput,
+            achieved,
+            outOf === 0 ? 0 : Math.round((achieved / outOf * 100))
+        );
+    }
 
     return review as unknown as JSON;
 }

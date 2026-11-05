@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Step, Language, LanguageNames, LanguageCodes, Levels, MODEL } from '@/app/types';
+import { Step, Language, LanguageNames, LanguageCodes, Levels, MODEL, isLanguage, isLevel } from '@/app/types';
 
 describe('Step', () => {
     it('has SELECTION value', () => {
@@ -111,5 +111,29 @@ describe('MODEL', () => {
 
     it('is a string', () => {
         expect(typeof MODEL).toBe('string');
+    });
+});
+
+describe('isLanguage()', () => {
+    it('accepts supported language codes', () => {
+        for (const code of ['en', 'de', 'fr']) expect(isLanguage(code)).toBe(true);
+    });
+
+    it('rejects anything else', () => {
+        for (const value of ['es', 'DE', 'German', '', '../de', null, undefined, 1, {}]) {
+            expect(isLanguage(value)).toBe(false);
+        }
+    });
+});
+
+describe('isLevel()', () => {
+    it('accepts supported levels', () => {
+        for (const level of ['A1', 'A2', 'B1', 'B2']) expect(isLevel(level)).toBe(true);
+    });
+
+    it('rejects unsupported levels and other values', () => {
+        for (const value of ['C1', 'C2', 'b1', 'B1 ', '', null, 3]) {
+            expect(isLevel(value)).toBe(false);
+        }
     });
 });

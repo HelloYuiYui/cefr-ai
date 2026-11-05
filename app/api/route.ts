@@ -1,6 +1,6 @@
 'use server'
 import { cookies } from "next/headers";
-import { Language, Level, Prompt } from '../types';
+import { isLanguage, isLevel, Language, Level, MAX_ANSWER_LENGTH, Prompt } from '../types';
 import { promptSchema, readingSchema, reviewGeneration, checkRateLimit } from '@/lib';
 import logger from '@/lib/logger';
 import { getPromptById } from '@/lib/db';
@@ -34,6 +34,10 @@ export async function GET() {
  * @param language - Language code to set in cookies
  */
 export async function languageChange( language: Language ) {
+    if (!isLanguage(language)) {
+        logger.warn('Ignoring unsupported locale:', language);
+        return;
+    }
     logger.debug('Setting language to:', language);
     const store = await cookies();
     store.set('locale', language, { path: '/' });
@@ -60,6 +64,10 @@ export async function reviewAnswer(accessToken: string | null, promptId: string,
         typeof input !== 'string'
     ) {
         return 'Invalid request.';
+    }
+
+    if (input.length > MAX_ANSWER_LENGTH) {
+        return `Your answer is too long. Please keep it under ${MAX_ANSWER_LENGTH} characters.`;
     }
 
     let prompt: Prompt | null;
@@ -128,6 +136,10 @@ export async function getWritingPrompt(language: Language, level: Level) {
         return { error: 'Rate limit exceeded. Please wait a moment before trying again.' };
     }
 
+    if (!isLanguage(language) || !isLevel(level)) {
+        return { error: 'Invalid request.' };
+    }
+
     return promptSchema(language, level);
 }
 
@@ -142,6 +154,10 @@ export async function getReadingPrompt(language: Language, level: Level) {
     if (!success) {
         logger.warn('Rate limit exceeded for getReading');
         return { error: 'Rate limit exceeded. Please wait a moment before trying again.' };
+    }
+
+    if (!isLanguage(language) || !isLevel(level)) {
+        return { error: 'Invalid request.' };
     }
 
     return readingSchema(language, level);
