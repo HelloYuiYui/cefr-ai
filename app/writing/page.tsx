@@ -24,7 +24,7 @@ export default function WritingPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [hasError, setHasError] = useState<boolean>(false);
     const initializedRef = useRef(false);
-    const { user, loading: authLoading } = useAuth();
+    const { session } = useAuth();
 
     const fetchPromptAndProceed = async (lang: Language, lvl: Level) => {
         setIsLoading(true);
@@ -53,10 +53,13 @@ export default function WritingPage() {
     };
 
     const proceedToReview = async (userInput: string) => {
+        if (!prompt) {
+            logger.error('Cannot submit a review without a prompt');
+            return;
+        }
         try {
             setUserInput(userInput);
-            logger.debug(user);
-            const response = await reviewAnswer(user?.id || null, prompt!, userInput); // TODO: Handle case where prompt is undefined, though it shouldn't be if flow is followed correctly.
+            const response = await reviewAnswer(session?.access_token ?? null, prompt.id, userInput);
             logger.debug('Received analysis:', response);
             setResult(response as string);
         } catch (error) {

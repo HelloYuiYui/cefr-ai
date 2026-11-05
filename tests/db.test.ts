@@ -16,6 +16,7 @@ vi.mock('pg', () => ({
 import {
     query,
     promptToDatabase,
+    getPromptById,
     responseToDatabase,
     readingTextToDatabase,
     readingResponseToDatabase
@@ -251,5 +252,41 @@ describe('readingResponseToDatabase()', () => {
 
         const [, values] = mockQuery.mock.calls[0];
         expect(values[2]).toBeNull();
+    });
+});
+
+describe('getPromptById()', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it('selects the prompt by id with a parameterised query', async () => {
+        mockQuery.mockResolvedValue({ rows: [] });
+
+        await getPromptById('prompt-1');
+
+        expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining('WHERE id = $1'), ['prompt-1']);
+    });
+
+    it('maps the row to a Prompt', async () => {
+        mockQuery.mockResolvedValue({
+            rows: [{ id: 7, language: 'fr', level: 'A1', topic: 'Education', prompt_text: 'Write something.' }]
+        });
+
+        const result = await getPromptById('7');
+
+        expect(result).toEqual({
+            id: '7',
+            prompt: 'Write something.',
+            language: 'fr',
+            level: 'A1',
+            topic: 'Education'
+        });
+    });
+
+    it('returns null when the prompt does not exist', async () => {
+        mockQuery.mockResolvedValue({ rows: [] });
+
+        expect(await getPromptById('missing')).toBeNull();
     });
 });
