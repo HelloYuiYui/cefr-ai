@@ -42,6 +42,7 @@ vi.mock('@/lib/schemas/reviews', () => ({
 
 import mistral from '@/lib/mistral';
 import { responseToDatabase } from '@/lib/db';
+import type { Language, Level, Prompt } from '@/app/types';
 
 describe('calculateTotalScore()', () => {
     it('sums all numeric fields in a French A1 review (total 15)', () => {
@@ -210,7 +211,7 @@ describe('reviewGeneration()', () => {
         vi.clearAllMocks();
     });
 
-    const mockPrompt = (lang: string, lvl: string) => ({
+    const mockPrompt = (lang: Language, lvl: Level): Prompt => ({
         id: 'prompt-1',
         prompt: 'Write something.',
         language: lang,
@@ -248,7 +249,7 @@ describe('reviewGeneration()', () => {
         await reviewGeneration('user-1', mockPrompt('fr', 'A1'), 'Mon texte');
 
         const callArgs = vi.mocked(mistral.chat.complete).mock.calls[0][0];
-        expect(callArgs.responseFormat.jsonSchema.name).toBe('frenchA1');
+        expect(callArgs.responseFormat?.jsonSchema?.name).toBe('frenchA1');
     });
 
     it('routes French A2 to correct Mistral schema', async () => {
@@ -273,7 +274,7 @@ describe('reviewGeneration()', () => {
         await reviewGeneration('user-1', mockPrompt('fr', 'A2'), 'Mon texte');
 
         const callArgs = vi.mocked(mistral.chat.complete).mock.calls[0][0];
-        expect(callArgs.responseFormat.jsonSchema.name).toBe('frenchA2');
+        expect(callArgs.responseFormat?.jsonSchema?.name).toBe('frenchA2');
     });
 
     it('routes French B1 to correct Mistral schema', async () => {
@@ -301,7 +302,7 @@ describe('reviewGeneration()', () => {
         await reviewGeneration('user-1', mockPrompt('fr', 'B1'), 'Mon texte');
 
         const callArgs = vi.mocked(mistral.chat.complete).mock.calls[0][0];
-        expect(callArgs.responseFormat.jsonSchema.name).toBe('frenchB1');
+        expect(callArgs.responseFormat?.jsonSchema?.name).toBe('frenchB1');
     });
 
     it('routes French B2 to correct Mistral schema', async () => {
@@ -329,7 +330,7 @@ describe('reviewGeneration()', () => {
         await reviewGeneration('user-1', mockPrompt('fr', 'B2'), 'Mon texte');
 
         const callArgs = vi.mocked(mistral.chat.complete).mock.calls[0][0];
-        expect(callArgs.responseFormat.jsonSchema.name).toBe('frenchB2');
+        expect(callArgs.responseFormat?.jsonSchema?.name).toBe('frenchB2');
     });
 
     it('routes German B1 to correct Mistral schema', async () => {
@@ -349,7 +350,7 @@ describe('reviewGeneration()', () => {
         await reviewGeneration('user-1', mockPrompt('de', 'B1'), 'Mein Text');
 
         const callArgs = vi.mocked(mistral.chat.complete).mock.calls[0][0];
-        expect(callArgs.responseFormat.jsonSchema.name).toBe('germanB1');
+        expect(callArgs.responseFormat?.jsonSchema?.name).toBe('germanB1');
     });
 
     it('routes unsupported language/level to default schema', async () => {
@@ -368,7 +369,7 @@ describe('reviewGeneration()', () => {
         await reviewGeneration('user-1', mockPrompt('en', 'B2'), 'My text');
 
         const callArgs = vi.mocked(mistral.chat.complete).mock.calls[0][0];
-        expect(callArgs.responseFormat.jsonSchema.name).toBe('default');
+        expect(callArgs.responseFormat?.jsonSchema?.name).toBe('default');
     });
 
     it('routes English B1 to default schema', async () => {
@@ -387,7 +388,7 @@ describe('reviewGeneration()', () => {
         await reviewGeneration('user-1', mockPrompt('en', 'B1'), 'My text');
 
         const callArgs = vi.mocked(mistral.chat.complete).mock.calls[0][0];
-        expect(callArgs.responseFormat.jsonSchema.name).toBe('default');
+        expect(callArgs.responseFormat?.jsonSchema?.name).toBe('default');
     });
 
     it('saves response to database when userId is provided', async () => {

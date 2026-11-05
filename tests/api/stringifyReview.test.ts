@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 // We need to mock the server-action dependencies before importing
 vi.mock('next/headers', () => ({
@@ -24,42 +24,42 @@ vi.mock('@/app/context/AuthContext', () => ({
 import { stringifyReview } from '@/app/api/route';
 
 describe('stringifyReview()', () => {
-    it('formats each key:value on its own line', () => {
+    it('formats each key:value on its own line', async () => {
         const review = {
             grammarFeedback: 'Good grammar',
             vocabularyFeedback: 'Nice vocabulary',
             outOf: 100
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         expect(result).toContain('grammarFeedback:Good grammar\n');
         expect(result).toContain('vocabularyFeedback:Nice vocabulary\n');
     });
 
-    it('sums numeric scoring fields correctly', () => {
+    it('sums numeric scoring fields correctly', async () => {
         const review = {
             score1: 5,
             score2: 10,
             outOf: 20
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         expect(result).toContain('totalScore: 15/20');
     });
 
-    it('excludes outOf from the output lines', () => {
+    it('excludes outOf from the output lines', async () => {
         const review = {
             score1: 5,
             outOf: 10
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         const lines = result.split('\n').filter(l => l.trim());
         const outOfLine = lines.find(l => l.startsWith('outOf:'));
         expect(outOfLine).toBeUndefined();
     });
 
-    it('excludes language, level, name from numeric sum', () => {
+    it('excludes language, level, name from numeric sum', async () => {
         const review = {
             name: 'Student',
             score1: 5,
@@ -68,46 +68,46 @@ describe('stringifyReview()', () => {
             outOf: 15
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         // Only score1 (5) should be summed, not language/level/name
         expect(result).toContain('totalScore: 5/15');
     });
 
-    it('shows percentage when outOf != 100', () => {
+    it('shows percentage when outOf != 100', async () => {
         const review = {
             score1: 12,
             outOf: 15
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         expect(result).toContain('totalScore: 12/15 (80%)');
     });
 
-    it('omits percentage when outOf == 100', () => {
+    it('omits percentage when outOf == 100', async () => {
         const review = {
             grammarFeedback: 'Good',
             score: 75,
             outOf: 100
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         // stringifyReview sums numeric fields (score=75), excludeFromSum has 'outOf','language','level','name'
         expect(result).toContain('totalScore: 75/100');
         expect(result).not.toContain('%');
     });
 
-    it('handles review with only string values (achieved = 0)', () => {
+    it('handles review with only string values (achieved = 0)', async () => {
         const review = {
             grammarFeedback: 'Good',
             vocabularyFeedback: 'Nice',
             outOf: 15
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         expect(result).toContain('totalScore: 0/15 (0%)');
     });
 
-    it('handles French A1 review format (15 points)', () => {
+    it('handles French A1 review format (15 points)', async () => {
         const review = {
             name: 'Student',
             grammarFeedback: 'Good grammar usage.',
@@ -124,12 +124,12 @@ describe('stringifyReview()', () => {
             outOf: 15
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         const total = 2 + 1.5 + 3 + 2 + 2.5 + 1;
         expect(result).toContain(`totalScore: ${total}/15`);
     });
 
-    it('handles French B1 review format (25 points)', () => {
+    it('handles French B1 review format (25 points)', async () => {
         const review = {
             name: 'Student',
             grammarFeedback: 'Feedback',
@@ -150,12 +150,12 @@ describe('stringifyReview()', () => {
             outOf: 25
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         const total = 2 + 4 + 3 + 2.5 + 1.5 + 2 + 1.5 + 1.5 + 2 + 1.5;
         expect(result).toContain(`totalScore: ${total}/25`);
     });
 
-    it('handles default/baseline review format (100 points)', () => {
+    it('handles default/baseline review format (100 points)', async () => {
         const review = {
             grammarFeedback: 'Feedback',
             vocabularyFeedback: 'Feedback',
@@ -166,7 +166,7 @@ describe('stringifyReview()', () => {
             level: 'B1'
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         // totalScore is in EXCLUDE_FROM_SUM in stringifyReview's own logic - but wait,
         // stringifyReview has its own excludeFromSum list: ['outOf', 'language', 'level', 'name']
         // totalScore is NOT excluded from sum in stringifyReview (it IS excluded in calculateTotalScore)
@@ -175,7 +175,7 @@ describe('stringifyReview()', () => {
         expect(result).not.toContain('%');
     });
 
-    it('handles German B1 review format (40 points)', () => {
+    it('handles German B1 review format (40 points)', async () => {
         // German B1 has string criteria (erfuellung etc.) - they won't be summed
         const review = {
             name: 'Student',
@@ -192,7 +192,7 @@ describe('stringifyReview()', () => {
             outOf: 40
         } as unknown as JSON;
 
-        const result = stringifyReview(review);
+        const result = await stringifyReview(review);
         // No numeric scoring fields in German B1 (all strings), so achieved = 0
         expect(result).toContain('totalScore: 0/40 (0%)');
     });
