@@ -37,6 +37,18 @@ export const Levels = {
 } as const;
 export type Level = typeof Levels[keyof typeof Levels];
 
+export const SUPPORTED_LANGUAGES: readonly Language[] = [Language.ENGLISH, Language.GERMAN, Language.FRENCH];
+export const SUPPORTED_LEVELS: readonly Level[] = [Levels.A1, Levels.A2, Levels.B1, Levels.B2];
+
+export const isLanguage = (value: unknown): value is Language =>
+    typeof value === 'string' && (SUPPORTED_LANGUAGES as readonly string[]).includes(value);
+
+export const isLevel = (value: unknown): value is Level =>
+    typeof value === 'string' && (SUPPORTED_LEVELS as readonly string[]).includes(value);
+
+/** Longest answer, in characters, that the server will send for review. */
+export const MAX_ANSWER_LENGTH = 5000;
+
 export const MODEL = process.env.MODEL || 'mistral-small-latest';
 
 // Database related types

@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import "./styles.css";
 import logger from '@/lib/logger';
+import { MAX_ANSWER_LENGTH } from "../types";
 
 export default function Form({ proceedToReview }: { proceedToReview: (input: string) => void; }) {
     const t = useTranslations('FormPage');
@@ -18,6 +19,7 @@ export default function Form({ proceedToReview }: { proceedToReview: (input: str
                     className="userInput w-full min-h-[200px] md:min-h-[300px] p-3 md:p-4 text-sm md:text-base"
                     name="userInput"
                     rows={10}
+                    maxLength={MAX_ANSWER_LENGTH}
                     onChange={(e) => {
                         const wordCount = e.currentTarget.value.trim().split(/\s+/).filter(word => word.length > 0).length;
                         const counter = document.getElementById('wordCounter');
