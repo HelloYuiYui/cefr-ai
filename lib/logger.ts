@@ -13,8 +13,8 @@ function warn(...args: unknown[]) {
 }
 
 function error(...args: unknown[]) {
-    // Always show errors in non-production or when DEBUG is true
-    if (DEBUG) console.error('[error]', ...args);
+    // Errors must always be logged, in production too
+    console.error('[error]', ...args);
 }
 
 export default { debug, info, warn, error };
