@@ -81,8 +81,8 @@ describe('logger (DEBUG=false, production)', () => {
         expect(console.warn).not.toHaveBeenCalled();
     });
 
-    it('error() does NOT call console.error', () => {
+    it('error() calls console.error even in production', () => {
         logger.error('test');
-        expect(console.error).not.toHaveBeenCalled();
+        expect(console.error).toHaveBeenCalledWith('[error]', 'test');
     });
 });
